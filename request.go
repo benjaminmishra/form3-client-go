@@ -38,7 +38,7 @@ func (c *Client) NewRequest(method, url string, body *RequestBody) (*http.Reques
 
 	switch method {
 	case http.MethodGet, http.MethodOptions, http.MethodHead, http.MethodDelete:
-		httpReq, err = http.NewRequest(http.MethodGet, u.String(), nil)
+		httpReq, err = http.NewRequest(method, u.String(), nil)
 		if err != nil {
 			return nil, err
 		}
@@ -49,7 +49,7 @@ func (c *Client) NewRequest(method, url string, body *RequestBody) (*http.Reques
 			return nil, err
 		}
 
-		httpReq, err = http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(encodedBody))
+		httpReq, err = http.NewRequest(method, u.String(), bytes.NewBuffer(encodedBody))
 		if err != nil {
 			return nil, err
 		}

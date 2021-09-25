@@ -7,14 +7,16 @@ import (
 	"github.com/google/uuid"
 )
 
+// Response is Form3 standard resposne object which warps the service specific attributes and
+// other common fields sent back in every api response.
 type Response struct {
 	*http.Response
 
-	Data  []Data
-	Links Links
+	Data  []responseData `json:"data"`
+	Links links          `json:"links,omitempty"`
 }
 
-type Data struct {
+type responseData struct {
 	Type           string      `json:"type,omitempty"`
 	ID             uuid.UUID   `json:"id,omitempty"`
 	Version        int         `json:"version,omitempty"`
@@ -24,7 +26,7 @@ type Data struct {
 	Attributes     interface{} `json:"attributes,omitempty"`
 }
 
-type Links struct {
+type links struct {
 	Self  url.URL `json:"self,omitempty"`
 	First url.URL `json:"first,omitempty"`
 	Last  url.URL `json:"last,omitempty"`

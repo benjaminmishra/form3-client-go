@@ -13,7 +13,7 @@ import (
 const (
 	// baseURLPath is a non-empty Client.BaseURL path to use during tests,
 	// to ensure relative URLs are used for all endpoints. See issue #752.
-	baseURLPath = "/api-v3"
+	baseURLPath = "/v1"
 )
 
 func setup() (client *f3client.Client, mux *http.ServeMux, serverURL string, teardown func()) {
@@ -42,7 +42,7 @@ func setup() (client *f3client.Client, mux *http.ServeMux, serverURL string, tea
 	// configured to use test server.
 	client = f3client.NewClient(nil)
 	url, _ := url.Parse(server.URL + baseURLPath + "/")
-	client.Host = *url
+	client.BaseURL = *url
 
 	return client, mux, server.URL, server.Close
 }

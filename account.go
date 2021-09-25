@@ -35,15 +35,37 @@ type AccountAttributes struct {
 	Switched                *bool    `json:"switched,omitempty"`
 }
 
-func (account *AccountService) Create() {
+type CreateAccountRequest struct {
+	Country                 *string  `json:"country,omitempty"`
+	BaseCurrency            string   `json:"base_currency,omitempty"`
+	BankID                  string   `json:"bank_id,omitempty"`
+	BankIDCode              string   `json:"bank_id_code,omitempty"`
+	Bic                     string   `json:"bic,omitempty"`
+	Iban                    string   `json:"iban,omitempty"`
+	CustomerID              string   `json:"customer_id,omitempty"`
+	Name                    []string `json:"name,omitempty"`
+	AlternativeNames        []string `json:"alternative_names,omitempty"`
+	AccountClassification   string   `json:"account_classification,omitempty"`
+	JointAccount            bool     `json:"joint_account,omitempty"`
+	AccountMatchingOptOut   bool     `json:"account_matching_opt_out,omitempty"`
+	SecondaryIdentification bool     `json:"secondary_identification,omitempty"`
+	Switched                bool     `json:"switched,omitempty"`
+	ProcessingService       string   `json:"processing_service,omitempty"`
+	UserDefinedInformation  string   `json:"user_defined_information,omitempty"`
+	ValidationType          string   `json:"validation_type,omitempty"`
+	ReferenceMask           string   `json:"reference_mask,omitempty"`
+	AcceptanceQualifier     string   `json:"acceptance_qualifier,omitempty"`
 }
 
-func (account *AccountService) Fetch(accountId uuid.UUID) *Account {
-	
-
-	return &Account{}
+func (account *AccountService) Create(accountId uuid.UUID, orgnisationId uuid.UUID, createAccReq *CreateAccountRequest) (*Account, error) {
+	return &Account{}, nil
 }
 
-func (account *AccountService) Delete() {
+func (account *AccountService) Fetch(accountId uuid.UUID) (*Account, error) {
 
+	return &Account{}, nil
+}
+
+func (account *AccountService) Delete(accountId uuid.UUID) error {
+	return nil
 }
