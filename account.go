@@ -3,7 +3,9 @@
 // more information about fields.
 package f3client
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type AccountService service
 
@@ -33,13 +35,15 @@ type AccountAttributes struct {
 	Switched                *bool    `json:"switched,omitempty"`
 }
 
-func (account *Account) Create() {
+func (account *AccountService) Create() {
 }
 
-func (account *Account) Fetch(accountId uuid.UUID) {
+func (account *AccountService) Fetch(accountId uuid.UUID) *Account {
 	
+
+	return &Account{}
 }
 
-func (account *Account) Delete() {
+func (account *AccountService) Delete() {
 
 }

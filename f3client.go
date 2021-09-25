@@ -4,16 +4,17 @@ package f3client
 
 import (
 	"net/http"
+	"net/url"
 )
 
 type Client struct {
-	Host       string
+	BaseURL    url.URL
 	common     service
 	HttpClient *http.Client
 	UserAgent  string
 
 	// Services for interacting with different parts of the API
-	Account    *AccountService
+	Accounts *AccountService
 }
 
 type service struct {
@@ -26,14 +27,15 @@ func NewClient(httpClient *http.Client) *Client {
 		httpClient = &http.Client{}
 	}
 
+	baseURL, _ := url.Parse("http://api.form3.tech")
 	c := &Client{
-		Host:       "api.form3.tech",
+		BaseURL:    *baseURL,
 		HttpClient: httpClient,
 		UserAgent:  "form3-go-client",
 	}
 
 	c.common.client = c
-	c.Account = (*AccountService)(&c.common)
+	c.Accounts = (*AccountService)(&c.common)
 
 	return c
 }
