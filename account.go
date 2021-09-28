@@ -4,17 +4,23 @@
 package f3client
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
+	"time"
+
 	"github.com/google/uuid"
 )
 
 type AccountService service
 
 type Account struct {
-	Attributes     *AccountAttributes `json:"attributes,omitempty"`
-	ID             string             `json:"id,omitempty"`
-	OrganisationID string             `json:"organisation_id,omitempty"`
-	Type           string             `json:"type,omitempty"`
-	Version        *int64             `json:"version,omitempty"`
+	ID             uuid.UUID         `json:"id,omitempty"`
+	Version        int               `json:"version,omitempty"`
+	OrganisationID uuid.UUID         `json:"organisation_id,omitempty"`
+	CreatedOn      string            `json:"created_on,omitempty"`
+	ModifiedOn     string            `json:"modified_on,omitempty"`
+	Attributes     AccountAttributes `json:"attributes,omitempty"`
 }
 
 type AccountAttributes struct {
@@ -35,7 +41,9 @@ type AccountAttributes struct {
 	Switched                *bool    `json:"switched,omitempty"`
 }
 
-type CreateAccountRequest struct {
+type AccountCreateRequest struct {
+	ID                      uuid.UUID
+	OrganisationID          uuid.UUID
 	Country                 *string  `json:"country,omitempty"`
 	BaseCurrency            string   `json:"base_currency,omitempty"`
 	BankID                  string   `json:"bank_id,omitempty"`
@@ -57,13 +65,64 @@ type CreateAccountRequest struct {
 	AcceptanceQualifier     string   `json:"acceptance_qualifier,omitempty"`
 }
 
-func (account *AccountService) Create(accountId uuid.UUID, orgnisationId uuid.UUID, createAccReq *CreateAccountRequest) (*Account, error) {
+func (acr *AccountCreateRequest) validate() error {
+
+	if acr.ID == uuid.Nil {
+		return errors.New("invalid request. ID is mandatory")
+	}
+
+	if acr.OrganisationID == uuid.Nil {
+		return errors.New("invalid Request. OrganisationID is mandatory")
+	}
+
+	return nil
+}
+func (acr *AccountCreateRequest) convertToJson() ([]byte, int64, error) {
+
+	requestData := RequestData{
+		ObjType:    "accounts",
+		Id:         acr.ID,
+		OrgId:      acr.OrganisationID,
+		CreatedOn:  time.Now().String(),
+		ModifiedOn: time.Now().String(),
+		Version:    0,
+		Attributes: acr,
+	}
+
+	data := Data{
+		RequestData: requestData,
+	}
+
+	jsonBody, err := json.Marshal(data)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return jsonBody, int64(len(jsonBody)), nil
+}
+
+func (account *AccountService) Create(ctx context.Context, createAccReq *AccountCreateRequest) (*Account, error) {
 	return &Account{}, nil
 }
 
-func (account *AccountService) Fetch(accountId uuid.UUID) (*Account, error) {
+func (account *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Account, error) {
+	var acc *Account = new(Account)
 
-	return &Account{}, nil
+	url := account.client.Version + "/organisation/accounts/" + accountId.String()
+
+	req, err := account.client.NewRequest(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := account.client.SendRequest(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	acc = resp.Data.(Account)
+
+	return acc, nil
 }
 
 func (account *AccountService) Delete(accountId uuid.UUID) error {
