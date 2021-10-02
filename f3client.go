@@ -3,12 +3,15 @@
 package f3client
 
 import (
-	"bytes"
-	"context"
-	"errors"
-	"io"
 	"net/http"
 	"net/url"
+)
+
+const (
+	Get    string = "GET"
+	Put           = "PUT"
+	Post          = "POST"
+	Delete        = "DELETE"
 )
 
 type Client struct {
@@ -49,11 +52,11 @@ func NewClient(httpClient *http.Client) *Client {
 // if the request creation is not suceessful then it returns error and
 // the request object is returned as nil. The body of the request needs
 // to be of type of pointer to RequestBody
-func (c *Client) NewRequest(ctx context.Context, method, relativeUrl string, body *requestBody) (*http.Request, error) {
+/*func (c *Client) NewRequest(ctx context.Context, method, relativeUrl string, requestBody interface{}) (*RequestBody, error) {
 
-	u, urlParseErr := c.BaseURL.Parse(relativeUrl)
-	if urlParseErr != nil {
-		return nil, urlParseErr
+	u, err := c.BaseURL.Parse(relativeUrl)
+	if err != nil {
+		return nil, err
 	}
 
 	var httpReq *http.Request
@@ -66,17 +69,12 @@ func (c *Client) NewRequest(ctx context.Context, method, relativeUrl string, bod
 		encodedBody = nil
 		contentLen = 0
 	default:
-		bodyValidationErr := (*body).validate()
-		if bodyValidationErr != nil {
-			return nil, bodyValidationErr
-		}
-
-		jsondBody, jsonBodyLength, err := (*body).convertToJson()
+		jsonBody, err := json.Marshal(requestBody)
 		if err != nil {
 			return nil, err
 		}
-		encodedBody = bytes.NewBuffer(jsondBody)
-		contentLen = jsonBodyLength
+		encodedBody = bytes.NewBuffer(jsonBody)
+		contentLen = int64(len(jsonBody))
 	}
 
 	httpReq, newReqErr := http.NewRequest(method, u.String(), encodedBody)
@@ -106,3 +104,4 @@ func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*Succe
 
 	return sucessResp, nil
 }
+*/
