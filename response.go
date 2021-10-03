@@ -11,7 +11,7 @@ import (
 
 // Response is Form3 standard resposne object which warps the service specific attributes and
 // other common fields sent back in every api response.
-type SuccessResponse struct {
+type Response struct {
 	*http.Response
 
 	Data  responseData `json:"data,omitempty"`
@@ -42,8 +42,8 @@ type ErrorResponse struct {
 	Message string `json:"error_message,omitempty"`
 }
 
-func convert(httpResponse *http.Response) (*SuccessResponse, *ErrorResponse, error) {
-	var s SuccessResponse
+func convert(httpResponse *http.Response, *ErrorResponse, error) {
+	
 	var e ErrorResponse
 	var i map[string]interface{}
 

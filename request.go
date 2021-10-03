@@ -7,9 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Request struct {
-}
-
 type RequestBody struct {
 	Data struct {
 		ObjType    string      `json:"type"`
@@ -22,11 +19,18 @@ type RequestBody struct {
 
 func ConvertToRequestBody(req interface{}, requestType string) (*RequestBody, error) {
 
-	mandatoryFields := [2]string{"id", "organisation_id"}
-
 	var requestBody RequestBody
 	inInteface := make(map[string]interface{})
 	inReqBody := make(map[string]interface{})
+
+	// validate arguments to the function
+	if req == nil {
+		return nil, fmt.Errorf("req cannot be nil")
+	}
+
+	if requestType == "" {
+		return nil, fmt.Errorf("requestType cannot be empty")
+	}
 
 	byteReq, err := json.Marshal(&req)
 	if err != nil {
@@ -39,15 +43,9 @@ func ConvertToRequestBody(req interface{}, requestType string) (*RequestBody, er
 	}
 
 	// validate the request body
-	// check for missing mandatory fields
-	for _, field := range mandatoryFields {
-		if value, ok := inInteface[field]; ok {
-			if value == "00000000-0000-0000-0000-000000000000" {
-				return nil, fmt.Errorf("%s is mandatory in the request body", field)
-			}
-		} else {
-			return nil, fmt.Errorf("%s is mandatory in the request body", field)
-		}
+	err = validateReq(&inInteface)
+	if err != nil {
+		return nil, err
 	}
 
 	// add generic RequestBody attributes to the inInterface
@@ -69,4 +67,24 @@ func ConvertToRequestBody(req interface{}, requestType string) (*RequestBody, er
 	}
 
 	return &requestBody, nil
+}
+
+func validateReq(inInteface *map[string]interface{}) error {
+
+	mandatoryFields := [2]string{"id", "organisation_id"}
+
+	// check for missing mandatory fields
+	for _, field := range mandatoryFields {
+		// found ! check if the field values are 0
+		if value, ok := (*inInteface)[field]; ok {
+			if value == "00000000-0000-0000-0000-000000000000" {
+				return fmt.Errorf("%s is mandatory in the request body", field)
+			}
+		} else {
+			// not found ! throw error
+			return fmt.Errorf("%s is mandatory in the request body", field)
+		}
+	}
+
+	return nil
 }
