@@ -3,15 +3,21 @@
 package f3client
 
 import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 )
 
 const (
 	Get    string = "GET"
-	Put           = "PUT"
-	Post          = "POST"
-	Delete        = "DELETE"
+	Put    string = "PUT"
+	Post   string = "POST"
+	Delete string = "DELETE"
 )
 
 type Client struct {
@@ -40,6 +46,7 @@ func NewClient(httpClient *http.Client) *Client {
 		BaseURL:    *baseURL,
 		HttpClient: httpClient,
 		UserAgent:  "form3-go-client",
+		Version:    "v1",
 	}
 
 	c.common.client = c
@@ -50,11 +57,10 @@ func NewClient(httpClient *http.Client) *Client {
 
 // NewRequest creates http.Request object and returns a pointer to it
 // if the request creation is not suceessful then it returns error and
-// the request object is returned as nil. The body of the request needs
-// to be of type of pointer to RequestBody
-/*func (c *Client) NewRequest(ctx context.Context, method, relativeUrl string, requestBody interface{}) (*RequestBody, error) {
+// the request object is returned as nil.
+func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType string, body interface{}) (*http.Request, error) {
 
-	u, err := c.BaseURL.Parse(relativeUrl)
+	u, err := c.BaseURL.Parse(urlStr)
 	if err != nil {
 		return nil, err
 	}
@@ -69,17 +75,18 @@ func NewClient(httpClient *http.Client) *Client {
 		encodedBody = nil
 		contentLen = 0
 	default:
-		jsonBody, err := json.Marshal(requestBody)
+		requestBody, err := ConvertToRequestBody(body, objectType)
 		if err != nil {
 			return nil, err
 		}
-		encodedBody = bytes.NewBuffer(jsonBody)
-		contentLen = int64(len(jsonBody))
+
+		encodedBody = bytes.NewReader((*requestBody))
+		contentLen = int64(len((*requestBody)))
 	}
 
-	httpReq, newReqErr := http.NewRequest(method, u.String(), encodedBody)
-	if newReqErr != nil {
-		return nil, newReqErr
+	httpReq, err = http.NewRequest(method, u.String(), encodedBody)
+	if err != nil {
+		return nil, err
 	}
 
 	httpReq.ContentLength = contentLen
@@ -87,21 +94,37 @@ func NewClient(httpClient *http.Client) *Client {
 	return httpReq, nil
 }
 
-func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*SuccessResponse, error) {
+func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*Response, error) {
+	successResponse := new(Response)
+	errorResponse := new(struct {
+		Code    string `json:"code,omitempty"`
+		Message string `json:"message,omitempty"`
+	})
 
 	httpResp, err := c.HttpClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
 
-	sucessResp, errResp, err := convert(httpResp)
+	defer httpResp.Body.Close()
+
+	bodyBytes, err := ioutil.ReadAll(httpResp.Body)
 	if err != nil {
 		return nil, err
 	}
-	if errResp != nil {
-		return nil, errors.New(errResp.Message)
+
+	if httpResp.StatusCode >= 400 && httpResp.StatusCode <= 504 {
+		err = json.Unmarshal(bodyBytes, errorResponse)
+		if err != nil {
+			return nil, err
+		}
+		return nil, fmt.Errorf(errorResponse.Message)
 	}
 
-	return sucessResp, nil
+	err = json.Unmarshal(bodyBytes, successResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return successResponse, nil
 }
-*/

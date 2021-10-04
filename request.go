@@ -3,23 +3,10 @@ package f3client
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
-type RequestBody struct {
-	Data struct {
-		ObjType    string      `json:"type"`
-		Id         uuid.UUID   `json:"id"`
-		Version    int         `json:"version"`
-		OrgId      uuid.UUID   `json:"organisation_id"`
-		Attributes interface{} `json:"attributes"`
-	} `json:"data"`
-}
+func ConvertToRequestBody(req interface{}, requestType string) (*[]byte, error) {
 
-func ConvertToRequestBody(req interface{}, requestType string) (*RequestBody, error) {
-
-	var requestBody RequestBody
 	inInteface := make(map[string]interface{})
 	inReqBody := make(map[string]interface{})
 
@@ -42,7 +29,7 @@ func ConvertToRequestBody(req interface{}, requestType string) (*RequestBody, er
 		return nil, err
 	}
 
-	// validate the request body
+	// validate the incoming body
 	err = validateReq(&inInteface)
 	if err != nil {
 		return nil, err
@@ -52,36 +39,31 @@ func ConvertToRequestBody(req interface{}, requestType string) (*RequestBody, er
 	inInteface["type"] = requestType
 	inInteface["version"] = 0
 
-	// wrap the whole thing in data , same as ReqBody type
+	// wrap the whole thing in data
 	inReqBody["data"] = inInteface
 
 	// convert to RequestBody type
-	jsonStr, err := json.Marshal(&inReqBody)
+	encodedRequestBody, err := json.Marshal(&inReqBody)
 	if err != nil {
 		return nil, err
 	}
 
-	err = json.Unmarshal(jsonStr, &requestBody)
-	if err != nil {
-		return nil, err
-	}
-
-	return &requestBody, nil
+	return &encodedRequestBody, nil
 }
 
 func validateReq(inInteface *map[string]interface{}) error {
-
+	// TODO : move to a more generic place, to make this dependecy more explicit
 	mandatoryFields := [2]string{"id", "organisation_id"}
 
 	// check for missing mandatory fields
 	for _, field := range mandatoryFields {
-		// found ! check if the field values are 0
+		// yay found! check if the field values are 0
 		if value, ok := (*inInteface)[field]; ok {
 			if value == "00000000-0000-0000-0000-000000000000" {
 				return fmt.Errorf("%s is mandatory in the request body", field)
 			}
 		} else {
-			// not found ! throw error
+			// not found! throw error
 			return fmt.Errorf("%s is mandatory in the request body", field)
 		}
 	}
