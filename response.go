@@ -32,15 +32,19 @@ type Links struct {
 }
 
 func (r *Response) ConvertTo(targetType interface{}) error {
-	encoded, err := json.Marshal(r.Data)
-	if err != nil {
-		return err
-	}
 
-	err = json.Unmarshal(encoded, targetType)
-	if err != nil {
-		return err
-	}
+	if r.Data.Attributes != nil {
+		encoded, err := json.Marshal(r.Data)
+		if err != nil {
+			return err
+		}
 
+		err = json.Unmarshal(encoded, targetType)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
 	return nil
 }

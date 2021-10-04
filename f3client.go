@@ -78,15 +78,14 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType stri
 		requestBody, err := MarshalToRequestBody(body, objectType)
 		if err != nil {
 			return nil, err
-		}
+		}a
 
 		encodedBody = bytes.NewReader((*requestBody))
 		contentLen = int64(len((*requestBody)))
-	}
-
-	httpReq, err = http.NewRequest(method, u.String(), encodedBody)
-	if err != nil {
-		return nil, err
+		httpReq, err = http.NewRequest(method, u.String(), encodedBody)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	httpReq.ContentLength = contentLen
