@@ -12,7 +12,7 @@ type Response struct {
 }
 
 type ResponseData struct {
-	//Type           string      `json:"type,omitempty"`
+	Type           string      `json:"type,omitempty"`
 	ID             uuid.UUID   `json:"id,omitempty"`
 	Version        int         `json:"version,omitempty"`
 	OrganisationID uuid.UUID   `json:"organisation_id,omitempty"`

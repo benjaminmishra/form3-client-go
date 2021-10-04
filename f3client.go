@@ -75,7 +75,7 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType stri
 		encodedBody = nil
 		contentLen = 0
 	default:
-		requestBody, err := ConvertToRequestBody(body, objectType)
+		requestBody, err := MarshalToRequestBody(body, objectType)
 		if err != nil {
 			return nil, err
 		}
@@ -95,7 +95,7 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType stri
 }
 
 func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*Response, error) {
-	successResponse := new(Response)
+	response := new(Response)
 	errorResponse := new(struct {
 		Code    string `json:"code,omitempty"`
 		Message string `json:"message,omitempty"`
@@ -121,10 +121,10 @@ func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*Respo
 		return nil, fmt.Errorf(errorResponse.Message)
 	}
 
-	err = json.Unmarshal(bodyBytes, successResponse)
+	err = json.Unmarshal(bodyBytes, response)
 	if err != nil {
 		return nil, err
 	}
 
-	return successResponse, nil
+	return response, nil
 }

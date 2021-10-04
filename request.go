@@ -5,13 +5,13 @@ import (
 	"fmt"
 )
 
-func ConvertToRequestBody(req interface{}, requestType string) (*[]byte, error) {
+func MarshalToRequestBody(request interface{}, requestType string) (*[]byte, error) {
 
 	inInteface := make(map[string]interface{})
 	inReqBody := make(map[string]interface{})
 
 	// validate arguments to the function
-	if req == nil {
+	if request == nil {
 		return nil, fmt.Errorf("req cannot be nil")
 	}
 
@@ -19,7 +19,7 @@ func ConvertToRequestBody(req interface{}, requestType string) (*[]byte, error) 
 		return nil, fmt.Errorf("requestType cannot be empty")
 	}
 
-	byteReq, err := json.Marshal(&req)
+	byteReq, err := json.Marshal(&request)
 	if err != nil {
 		return nil, err
 	}
@@ -29,20 +29,20 @@ func ConvertToRequestBody(req interface{}, requestType string) (*[]byte, error) 
 		return nil, err
 	}
 
-	// validate the incoming body
+	// validate the incoming body for
+	// account id and org id
 	err = validateReq(&inInteface)
 	if err != nil {
 		return nil, err
 	}
 
-	// add generic RequestBody attributes to the inInterface
+	// add other generic mandatory attributes to the map[string]interface{}
 	inInteface["type"] = requestType
 	inInteface["version"] = 0
 
 	// wrap the whole thing in data
 	inReqBody["data"] = inInteface
 
-	// convert to RequestBody type
 	encodedRequestBody, err := json.Marshal(&inReqBody)
 	if err != nil {
 		return nil, err

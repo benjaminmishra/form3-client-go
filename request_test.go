@@ -9,34 +9,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConvertToRequestBody(t *testing.T) {
+func TestMarshalToRequestBody(t *testing.T) {
 	accUUId := uuid.New()
 	orgUUId := uuid.New()
 
-	accCreateReq := f3client.AccountCreateRequest{
+	accCreateReq := f3client.Account{
 		ID:             accUUId,
 		OrganisationID: orgUUId,
-		Attributes: struct {
-			Country                 string   `json:"country,omitempty"`
-			BaseCurrency            string   `json:"base_currency,omitempty"`
-			BankID                  string   `json:"bank_id,omitempty"`
-			BankIDCode              string   `json:"bank_id_code,omitempty"`
-			Bic                     string   `json:"bic,omitempty"`
-			Iban                    string   `json:"iban,omitempty"`
-			CustomerID              string   `json:"customer_id,omitempty"`
-			Name                    []string `json:"name,omitempty"`
-			AlternativeNames        []string `json:"alternative_names,omitempty"`
-			AccountClassification   string   `json:"account_classification,omitempty"`
-			JointAccount            bool     `json:"joint_account,omitempty"`
-			AccountMatchingOptOut   bool     `json:"account_matching_opt_out,omitempty"`
-			SecondaryIdentification bool     `json:"secondary_identification,omitempty"`
-			Switched                bool     `json:"switched,omitempty"`
-			ProcessingService       string   `json:"processing_service,omitempty"`
-			UserDefinedInformation  string   `json:"user_defined_information,omitempty"`
-			ValidationType          string   `json:"validation_type,omitempty"`
-			ReferenceMask           string   `json:"reference_mask,omitempty"`
-			AcceptanceQualifier     string   `json:"acceptance_qualifier,omitempty"`
-		}{
+		Attributes: f3client.AccountAttributes{
 			Country:           "GB",
 			BaseCurrency:      "GBP",
 			BankID:            "400300",
@@ -70,17 +50,17 @@ func TestConvertToRequestBody(t *testing.T) {
 	}
 
 	// execute the function
-	actual, err := f3client.ConvertToRequestBody(accCreateReq, "accounts")
+	actual, err := f3client.MarshalToRequestBody(accCreateReq, "accounts")
 	if err != nil {
 		assert.Fail(t, err.Error())
 	}
 
-	assert.Equal(t, actual, expected)
+	assert.Equal(t, *actual, expected)
 }
 
-func TestConvertToRequestBody_NilRequest(t *testing.T) {
+func TestMarshalToRequestBody_NilRequest(t *testing.T) {
 
-	_, err := f3client.ConvertToRequestBody(nil, "accounts")
+	_, err := f3client.MarshalToRequestBody(nil, "accounts")
 	if err != nil {
 		assert.EqualError(t, err, "req cannot be nil")
 	} else {
@@ -88,34 +68,14 @@ func TestConvertToRequestBody_NilRequest(t *testing.T) {
 	}
 }
 
-func TestConvertToRequestBody_NilRequestType(t *testing.T) {
+func TestMarshalToRequestBody_NilRequestType(t *testing.T) {
 	accUUId := uuid.New()
 	orgUUId := uuid.New()
 
-	accCreateReq := f3client.AccountCreateRequest{
+	accCreateReq := f3client.Account{
 		ID:             accUUId,
 		OrganisationID: orgUUId,
-		Attributes: struct {
-			Country                 string   `json:"country,omitempty"`
-			BaseCurrency            string   `json:"base_currency,omitempty"`
-			BankID                  string   `json:"bank_id,omitempty"`
-			BankIDCode              string   `json:"bank_id_code,omitempty"`
-			Bic                     string   `json:"bic,omitempty"`
-			Iban                    string   `json:"iban,omitempty"`
-			CustomerID              string   `json:"customer_id,omitempty"`
-			Name                    []string `json:"name,omitempty"`
-			AlternativeNames        []string `json:"alternative_names,omitempty"`
-			AccountClassification   string   `json:"account_classification,omitempty"`
-			JointAccount            bool     `json:"joint_account,omitempty"`
-			AccountMatchingOptOut   bool     `json:"account_matching_opt_out,omitempty"`
-			SecondaryIdentification bool     `json:"secondary_identification,omitempty"`
-			Switched                bool     `json:"switched,omitempty"`
-			ProcessingService       string   `json:"processing_service,omitempty"`
-			UserDefinedInformation  string   `json:"user_defined_information,omitempty"`
-			ValidationType          string   `json:"validation_type,omitempty"`
-			ReferenceMask           string   `json:"reference_mask,omitempty"`
-			AcceptanceQualifier     string   `json:"acceptance_qualifier,omitempty"`
-		}{
+		Attributes: f3client.AccountAttributes{
 			Country:           "GB",
 			BaseCurrency:      "GBP",
 			BankID:            "400300",
@@ -125,7 +85,7 @@ func TestConvertToRequestBody_NilRequestType(t *testing.T) {
 		},
 	}
 
-	_, err := f3client.ConvertToRequestBody(accCreateReq, "")
+	_, err := f3client.MarshalToRequestBody(accCreateReq, "")
 	if err != nil {
 		assert.EqualError(t, err, "requestType cannot be empty")
 	} else {
@@ -133,31 +93,11 @@ func TestConvertToRequestBody_NilRequestType(t *testing.T) {
 	}
 }
 
-func TestConvertToRequestBody_OrganisationIDMissing(t *testing.T) {
+func TestMarshalToRequestBody_OrganisationIDMissing(t *testing.T) {
 	accUUId := uuid.New()
-	accCreateReq := f3client.AccountCreateRequest{
+	accCreateReq := f3client.Account{
 		ID: accUUId,
-		Attributes: struct {
-			Country                 string   `json:"country,omitempty"`
-			BaseCurrency            string   `json:"base_currency,omitempty"`
-			BankID                  string   `json:"bank_id,omitempty"`
-			BankIDCode              string   `json:"bank_id_code,omitempty"`
-			Bic                     string   `json:"bic,omitempty"`
-			Iban                    string   `json:"iban,omitempty"`
-			CustomerID              string   `json:"customer_id,omitempty"`
-			Name                    []string `json:"name,omitempty"`
-			AlternativeNames        []string `json:"alternative_names,omitempty"`
-			AccountClassification   string   `json:"account_classification,omitempty"`
-			JointAccount            bool     `json:"joint_account,omitempty"`
-			AccountMatchingOptOut   bool     `json:"account_matching_opt_out,omitempty"`
-			SecondaryIdentification bool     `json:"secondary_identification,omitempty"`
-			Switched                bool     `json:"switched,omitempty"`
-			ProcessingService       string   `json:"processing_service,omitempty"`
-			UserDefinedInformation  string   `json:"user_defined_information,omitempty"`
-			ValidationType          string   `json:"validation_type,omitempty"`
-			ReferenceMask           string   `json:"reference_mask,omitempty"`
-			AcceptanceQualifier     string   `json:"acceptance_qualifier,omitempty"`
-		}{
+		Attributes: f3client.AccountAttributes{
 			Country:           "GB",
 			BaseCurrency:      "GBP",
 			BankID:            "400300",
@@ -167,36 +107,16 @@ func TestConvertToRequestBody_OrganisationIDMissing(t *testing.T) {
 		},
 	}
 
-	_, err := f3client.ConvertToRequestBody(accCreateReq, "accounts")
+	_, err := f3client.MarshalToRequestBody(accCreateReq, "accounts")
 
 	assert.EqualError(t, err, "organisation_id is mandatory in the request body")
 }
 
-func TestConvertToRequestBody_IDMissing(t *testing.T) {
+func TestMarshalToRequestBody_IDMissing(t *testing.T) {
 	orgUUId := uuid.New()
-	accCreateReq := f3client.AccountCreateRequest{
+	accCreateReq := f3client.Account{
 		OrganisationID: orgUUId,
-		Attributes: struct {
-			Country                 string   `json:"country,omitempty"`
-			BaseCurrency            string   `json:"base_currency,omitempty"`
-			BankID                  string   `json:"bank_id,omitempty"`
-			BankIDCode              string   `json:"bank_id_code,omitempty"`
-			Bic                     string   `json:"bic,omitempty"`
-			Iban                    string   `json:"iban,omitempty"`
-			CustomerID              string   `json:"customer_id,omitempty"`
-			Name                    []string `json:"name,omitempty"`
-			AlternativeNames        []string `json:"alternative_names,omitempty"`
-			AccountClassification   string   `json:"account_classification,omitempty"`
-			JointAccount            bool     `json:"joint_account,omitempty"`
-			AccountMatchingOptOut   bool     `json:"account_matching_opt_out,omitempty"`
-			SecondaryIdentification bool     `json:"secondary_identification,omitempty"`
-			Switched                bool     `json:"switched,omitempty"`
-			ProcessingService       string   `json:"processing_service,omitempty"`
-			UserDefinedInformation  string   `json:"user_defined_information,omitempty"`
-			ValidationType          string   `json:"validation_type,omitempty"`
-			ReferenceMask           string   `json:"reference_mask,omitempty"`
-			AcceptanceQualifier     string   `json:"acceptance_qualifier,omitempty"`
-		}{
+		Attributes: f3client.AccountAttributes{
 			Country:           "GB",
 			BaseCurrency:      "GBP",
 			BankID:            "400300",
@@ -206,7 +126,7 @@ func TestConvertToRequestBody_IDMissing(t *testing.T) {
 		},
 	}
 
-	_, err := f3client.ConvertToRequestBody(accCreateReq, "accounts")
+	_, err := f3client.MarshalToRequestBody(accCreateReq, "accounts")
 
 	assert.EqualError(t, err, "id is mandatory in the request body")
 }
