@@ -56,15 +56,7 @@ func (account *AccountService) Create(ctx context.Context, acc *Account) error {
 		return err
 	}
 
-	encoded, err := json.Marshal(resp.Data)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(encoded, acc)
-	if err != nil {
-		return err
-	}
+	resp.ConvertTo(acc)
 
 	return nil
 }
