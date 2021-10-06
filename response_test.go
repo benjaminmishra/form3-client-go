@@ -1,6 +1,7 @@
 package f3client_test
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -13,6 +14,7 @@ func TestConvertTo(t *testing.T) {
 
 	accId := uuid.New()
 	orgId := uuid.New()
+	date := time.Now().String()
 
 	response := f3client.Response{
 		Data: f3client.ResponseData{
@@ -20,9 +22,14 @@ func TestConvertTo(t *testing.T) {
 			ID:             accId,
 			Version:        1,
 			OrganisationID: orgId,
-			CreatedOn:      time.Now().String(),
-			ModifiedOn:     time.Now().String(),
-			Attributes:     nil,
+			CreatedOn:      date,
+			ModifiedOn:     date,
+			Attributes: f3client.AccountAttributes{
+				BankID:       "XYZ1234",
+				BaseCurrency: "INR",
+				BankIDCode:   "1234ASD",
+				Bic:          "ASD",
+			},
 		},
 		Links: f3client.Links{
 			Self: "http://localhost:8080/v1/accounts/" + accId.String(),
@@ -33,9 +40,14 @@ func TestConvertTo(t *testing.T) {
 		ID:             accId,
 		Version:        1,
 		OrganisationID: orgId,
-		CreatedOn:      time.Now().String(),
-		ModifiedOn:     time.Now().String(),
-		Attributes:     f3client.AccountAttributes{},
+		CreatedOn:      date,
+		ModifiedOn:     date,
+		Attributes: f3client.AccountAttributes{
+			BankID:       "XYZ1234",
+			BaseCurrency: "INR",
+			BankIDCode:   "1234ASD",
+			Bic:          "ASD",
+		},
 	}
 	acc := new(f3client.Account)
 	err := response.ConvertTo(acc)
@@ -43,6 +55,71 @@ func TestConvertTo(t *testing.T) {
 		assert.Fail(t, err.Error())
 	}
 
-	assert.EqualValues(t, acc, expected)
+	assert.EqualValues(t, acc, &expected)
+
+}
+
+func TestConvertTo_NilTargetType(t *testing.T) {
+
+	accId := uuid.New()
+	orgId := uuid.New()
+	date := time.Now().String()
+
+	response := f3client.Response{
+		Data: f3client.ResponseData{
+			Type:           "account",
+			ID:             accId,
+			Version:        1,
+			OrganisationID: orgId,
+			CreatedOn:      date,
+			ModifiedOn:     date,
+			Attributes: f3client.AccountAttributes{
+				BankID:       "XYZ1234",
+				BaseCurrency: "INR",
+				BankIDCode:   "1234ASD",
+				Bic:          "ASD",
+			},
+		},
+		Links: f3client.Links{
+			Self: "http://localhost:8080/v1/accounts/" + accId.String(),
+		},
+	}
+
+	err := response.ConvertTo(nil)
+
+	assert.EqualError(t, err, "targetType cannot be nil")
+
+}
+
+func TestConvertTo_IncompatableTargetType(t *testing.T) {
+
+	accId := uuid.New()
+	orgId := uuid.New()
+	date := time.Now().String()
+
+	response := f3client.Response{
+		Data: f3client.ResponseData{
+			Type:           "account",
+			ID:             accId,
+			Version:        1,
+			OrganisationID: orgId,
+			CreatedOn:      date,
+			ModifiedOn:     date,
+			Attributes: f3client.AccountAttributes{
+				BankID:       "XYZ1234",
+				BaseCurrency: "INR",
+				BankIDCode:   "1234ASD",
+				Bic:          "ASD",
+			},
+		},
+		Links: f3client.Links{
+			Self: "http://localhost:8080/v1/accounts/" + accId.String(),
+		},
+	}
+
+	targetType := new(string)
+	err := response.ConvertTo(targetType)
+
+	assert.ErrorAs(t, err, new(json.UnmarshalTypeError))
 
 }

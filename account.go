@@ -6,6 +6,7 @@ package f3client
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -90,6 +91,19 @@ func (account *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (
 	return acc, nil
 }
 
-func (account *AccountService) Delete(accountId uuid.UUID) error {
+func (account *AccountService) Delete(ctx context.Context, accountId uuid.UUID, accountVersion int) error {
+	path := account.client.Version + "/organisation/accounts/" + accountId.String() + "?version=" + fmt.Sprint(accountVersion)
+
+	req, err := account.client.NewRequest(ctx, Delete, path, "accounts", nil)
+	if err != nil {
+		return err
+	}
+
+	// no return expected , hence ignore the response object
+	_, err = account.client.SendRequest(ctx, req)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
