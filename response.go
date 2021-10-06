@@ -2,6 +2,7 @@ package f3client
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/google/uuid"
 )
@@ -31,9 +32,11 @@ type Links struct {
 	Prev  string `json:"prev,omitempty"`
 }
 
+// ConvertsTo converts the response object's data field to the type being passed in the argument.
+// pre requisite is the response object data field would have to be of same fields as the target type
 func (r *Response) ConvertTo(targetType interface{}) error {
-
-	if r.Data.Attributes != nil {
+	// if the targettype is nil, then do nothing
+	if r.Data.Attributes != nil && targetType != nil {
 		encoded, err := json.Marshal(r.Data)
 		if err != nil {
 			return err
@@ -45,6 +48,7 @@ func (r *Response) ConvertTo(targetType interface{}) error {
 		}
 
 		return nil
+	} else {
+		return errors.New("targetType cannot be nil")
 	}
-	return nil
 }
