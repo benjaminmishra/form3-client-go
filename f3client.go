@@ -57,7 +57,7 @@ func NewClient(httpClient *http.Client) *Client {
 
 // NewRequest creates http.Request object and returns a pointer to it
 // if the request creation is not suceessful then it returns error and
-// the request object is returned as nil.
+// the request object is returned as nil. It is a wrapper on http.NewRequest
 func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType string, body interface{}) (*http.Request, error) {
 
 	u, err := c.BaseURL.Parse(urlStr)
@@ -82,10 +82,11 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType stri
 
 		encodedBody = bytes.NewReader((*requestBody))
 		contentLen = int64(len((*requestBody)))
-		httpReq, err = http.NewRequest(method, u.String(), encodedBody)
-		if err != nil {
-			return nil, err
-		}
+	}
+
+	httpReq, err = http.NewRequest(method, u.String(), encodedBody)
+	if err != nil {
+		return nil, err
 	}
 
 	httpReq.ContentLength = contentLen

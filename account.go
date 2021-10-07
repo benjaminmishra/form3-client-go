@@ -98,7 +98,6 @@ func (account *AccountService) Delete(ctx context.Context, accountId uuid.UUID, 
 	if err != nil {
 		return err
 	}
-
 	// no return expected , hence ignore the response object
 	_, err = account.client.SendRequest(ctx, req)
 	if err != nil {

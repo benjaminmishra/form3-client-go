@@ -118,8 +118,9 @@ func TestConvertTo_IncompatableTargetType(t *testing.T) {
 	}
 
 	targetType := new(string)
-	err := response.ConvertTo(targetType)
+	actualerr := response.ConvertTo(targetType)
+	var expectederr *json.UnmarshalTypeError
 
-	assert.ErrorAs(t, err, new(json.UnmarshalTypeError))
+	assert.ErrorAs(t, actualerr, &expectederr)
 
 }
