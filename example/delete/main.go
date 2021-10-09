@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/benjaminmishra/f3client"
@@ -16,10 +17,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	client := f3client.NewClient(nil)
+	client := f3client.NewClient(nil, "http://localhost:8080/")
 
-	err = client.Accounts.Delete(ctx, accountId, 1)
+	success, err := client.Accounts.Delete(ctx, accountId, 1)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if success {
+		fmt.Print("Account has been deleted")
+	} else {
+		fmt.Print("Account was not deleted")
 	}
 }

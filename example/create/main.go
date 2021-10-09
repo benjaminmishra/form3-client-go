@@ -13,7 +13,7 @@ func main() {
 
 	ctx := context.Background()
 	// instantiate the client
-	client := f3client.NewClient(nil)
+	client := f3client.NewClient(nil, "http://localhost:8080")
 
 	accountId, err := uuid.NewUUID()
 	if err != nil {

@@ -35,13 +35,13 @@ type service struct {
 	client *Client
 }
 
-func NewClient(httpClient *http.Client) *Client {
+func NewClient(httpClient *http.Client, hostURL string) *Client {
 
 	if httpClient == nil {
 		httpClient = &http.Client{}
 	}
 
-	baseURL, _ := url.Parse("http://localhost:8080")
+	baseURL, _ := url.Parse(hostURL)
 	c := &Client{
 		BaseURL:    *baseURL,
 		HttpClient: httpClient,
@@ -97,8 +97,8 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType stri
 func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*Response, error) {
 	response := new(Response)
 	errorResponse := new(struct {
-		Code    string `json:"code,omitempty"`
-		Message string `json:"message,omitempty"`
+		Code    string `json:"error_code,omitempty"`
+		Message string `json:"error_message,omitempty"`
 	})
 
 	httpResp, err := c.HttpClient.Do(request)
@@ -119,6 +119,8 @@ func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*Respo
 			return nil, err
 		}
 		return nil, fmt.Errorf(errorResponse.Message)
+	} else if httpResp.StatusCode == 204 {
+		return nil, nil
 	}
 
 	err = json.Unmarshal(bodyBytes, response)

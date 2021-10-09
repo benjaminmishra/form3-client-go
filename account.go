@@ -5,7 +5,6 @@ package f3client
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -35,55 +34,57 @@ type AccountAttributes struct {
 	AccountClassification   string   `json:"account_classification,omitempty"`
 	JointAccount            bool     `json:"joint_account,omitempty"`
 	AccountMatchingOptOut   bool     `json:"account_matching_opt_out,omitempty"`
-	SecondaryIdentification bool     `json:"secondary_identification,omitempty"`
+	SecondaryIdentification string   `json:"secondary_identification,omitempty"`
 	Switched                bool     `json:"switched,omitempty"`
 	ProcessingService       string   `json:"processing_service,omitempty"`
 	UserDefinedInformation  string   `json:"user_defined_information,omitempty"`
 	ValidationType          string   `json:"validation_type,omitempty"`
 	ReferenceMask           string   `json:"reference_mask,omitempty"`
 	AcceptanceQualifier     string   `json:"acceptance_qualifier,omitempty"`
+	AccountNumber           string   `json:"account_number,omitempty"`
+	Status                  string   `json:"status,omitempty"`
 }
 
-func (account *AccountService) Create(ctx context.Context, acc *Account) error {
-	path := account.client.Version + "/organisation/accounts"
+func (as *AccountService) Create(ctx context.Context, account *Account) error {
+	var err error
 
-	req, err := account.client.NewRequest(ctx, Post, path, "accounts", acc)
+	path := as.client.Version + "/organisation/accounts"
+
+	req, err := as.client.NewRequest(ctx, Post, path, "accounts", account)
 	if err != nil {
 		return err
 	}
 
-	resp, err := account.client.SendRequest(ctx, req)
+	resp, err := as.client.SendRequest(ctx, req)
 	if err != nil {
 		return err
 	}
 
-	resp.ConvertTo(acc)
+	err = resp.ConvertTo(account)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func (account *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Account, error) {
+func (as *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Account, error) {
 
 	acc := new(Account)
 
-	path := account.client.Version + "/organisation/accounts/" + accountId.String()
+	path := "/v1/organisation/accounts/" + accountId.String()
 
-	req, err := account.client.NewRequest(ctx, Get, path, "accounts", nil)
+	req, err := as.client.NewRequest(ctx, Get, path, "accounts", nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := account.client.SendRequest(ctx, req)
+	resp, err := as.client.SendRequest(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	encoded, err := json.Marshal(resp.Data)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(encoded, acc)
+	err = resp.ConvertTo(acc)
 	if err != nil {
 		return nil, err
 	}
@@ -91,18 +92,22 @@ func (account *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (
 	return acc, nil
 }
 
-func (account *AccountService) Delete(ctx context.Context, accountId uuid.UUID, accountVersion int) error {
-	path := account.client.Version + "/organisation/accounts/" + accountId.String() + "?version=" + fmt.Sprint(accountVersion)
+func (as *AccountService) Delete(ctx context.Context, accountId uuid.UUID, accountVersion int) (bool, error) {
+	path := as.client.Version + "/organisation/accounts/" + accountId.String() + "?version=" + fmt.Sprint(accountVersion)
 
-	req, err := account.client.NewRequest(ctx, Delete, path, "accounts", nil)
+	req, err := as.client.NewRequest(ctx, Delete, path, "accounts", nil)
 	if err != nil {
-		return err
+		return false, err
 	}
 	// no return expected , hence ignore the response object
-	_, err = account.client.SendRequest(ctx, req)
+	resp, err := as.client.SendRequest(ctx, req)
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	return nil
+	if resp == nil {
+		return true, nil
+	}
+
+	return false, nil
 }
