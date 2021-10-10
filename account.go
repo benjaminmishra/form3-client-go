@@ -1,18 +1,21 @@
-// Account represents an account in the form3 org section.
-// See https://api-docs.form3.tech/api.html#organisation-accounts for
-// more information about fields.
 package f3client
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
 )
 
-type AccountService service
+type AccountService struct {
+	service
+	ObjectType string
+}
 
+// Account represents an account in the form3 org section.
+//
+// See https://api-docs.form3.tech/api.html#organisation-accounts for
+// more information about fields.
 type Account struct {
 	ID             uuid.UUID         `json:"id,omitempty"`
 	Version        int               `json:"version,omitempty"`
@@ -49,17 +52,17 @@ type AccountAttributes struct {
 func (as *AccountService) Create(ctx context.Context, account *Account) error {
 	var err error
 
-	path := as.client.Version + "/organisation/accounts"
+	path := "/v1/organisation/accounts"
 
 	// validate for mandatory account fields before creating new request
 	if account.Attributes.Country == "" {
-		return errors.New("country attribute is mandatory for creating account")
+		return NewArgError("country", "country is mandatory for account create request")
 	} else if account.Attributes.Name == nil {
-		return errors.New("name attribute are mandatory for creating account")
+		return NewArgError("name", "names are mandatory for account create request")
 	}
 
 	// create new request
-	req, err := as.client.NewRequest(ctx, Post, path, "accounts", account)
+	req, err := as.client.NewRequest(ctx, Post, path, as.ObjectType, account)
 	if err != nil {
 		return err
 	}
@@ -84,7 +87,7 @@ func (as *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Acco
 
 	path := "/v1/organisation/accounts/" + accountId.String()
 
-	req, err := as.client.NewRequest(ctx, Get, path, "accounts", nil)
+	req, err := as.client.NewRequest(ctx, Get, path, as.ObjectType, nil)
 	if err != nil {
 		return acc, err
 	}
@@ -103,9 +106,9 @@ func (as *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Acco
 }
 
 func (as *AccountService) Delete(ctx context.Context, accountId uuid.UUID, accountVersion int) (bool, error) {
-	path := as.client.Version + "/organisation/accounts/" + accountId.String() + "?version=" + fmt.Sprint(accountVersion)
+	path := "/v1/organisation/accounts/" + accountId.String() + "?version=" + fmt.Sprint(accountVersion)
 
-	req, err := as.client.NewRequest(ctx, Delete, path, "accounts", nil)
+	req, err := as.client.NewRequest(ctx, Delete, path, as.ObjectType, nil)
 	if err != nil {
 		return false, err
 	}

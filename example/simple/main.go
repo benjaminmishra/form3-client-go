@@ -26,7 +26,10 @@ func main() {
 }
 
 func fetchAccount(ctx context.Context, accountId uuid.UUID) (*f3client.Account, error) {
-	client := f3client.NewClient(nil, "http://localhost:8080")
+	client, err := f3client.NewClient()
+	if err != nil {
+		return nil, err
+	}
 	account, err := client.Accounts.Fetch(ctx, accountId)
 	if err != nil {
 		return nil, err

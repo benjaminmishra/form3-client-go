@@ -62,7 +62,8 @@ func TestMarshalToRequestBody_NilRequest(t *testing.T) {
 
 	_, err := f3client.MarshalToRequestBody(nil, "accounts")
 	if err != nil {
-		assert.EqualError(t, err, "req cannot be nil")
+		assert.IsType(t, &f3client.ArgumentError{}, err)
+		assert.EqualError(t, err, "request : request cannot be nil")
 	} else {
 		assert.FailNow(t, "Coversion doesn't check for nil req")
 	}
@@ -87,7 +88,8 @@ func TestMarshalToRequestBody_NilRequestType(t *testing.T) {
 
 	_, err := f3client.MarshalToRequestBody(accCreateReq, "")
 	if err != nil {
-		assert.EqualError(t, err, "requestType cannot be empty")
+		assert.IsType(t, &f3client.ArgumentError{}, err)
+		assert.EqualError(t, err, "requestType : requestType cannot be empty")
 	} else {
 		assert.FailNow(t, "Coversion doesn't check for nil requestType")
 	}

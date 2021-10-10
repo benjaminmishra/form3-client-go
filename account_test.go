@@ -59,7 +59,10 @@ func TestAccountService_CreateAccount(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -75,7 +78,7 @@ func TestAccountService_CreateAccount(t *testing.T) {
 		},
 	}
 
-	err := client.Accounts.Create(context.Background(), actual)
+	err = client.Accounts.Create(context.Background(), actual)
 	if err != nil {
 		assert.FailNow(t, err.Error())
 	}
@@ -119,7 +122,10 @@ func TestAccountService_Create_RequestValidationFailed_ID(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	organisationUUID, _ := uuid.Parse("ee2fb143-6dfe-4787-b183-de8ddd4164d1")
@@ -141,7 +147,7 @@ func TestAccountService_Create_RequestValidationFailed_ID(t *testing.T) {
 		},
 	}
 
-	err := client.Accounts.Create(context.Background(), actual)
+	err = client.Accounts.Create(context.Background(), actual)
 	if err != nil {
 		assert.EqualError(t, err, "id is mandatory in the request body")
 	}
@@ -160,7 +166,10 @@ func TestAccountService_Create_RequestValidationFailed_OrganisationID(t *testing
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	accountid, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -204,7 +213,10 @@ func TestAccountService_Create_RequestValidationFailed_Country(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	accountid, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -236,7 +248,8 @@ func TestAccountService_Create_RequestValidationFailed_Country(t *testing.T) {
 
 	err = client.Accounts.Create(context.Background(), actual)
 	if err != nil {
-		assert.EqualError(t, err, "country attribute is mandatory for creating account")
+		assert.IsType(t, &f3client.ArgumentError{}, err)
+		assert.EqualError(t, err, "country : country is mandatory for account create request")
 	}
 
 	assert.Equal(t, expected, actual)
@@ -253,7 +266,10 @@ func TestAccountService_Create_RequestValidationFailed_Names(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	accountid, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -285,7 +301,8 @@ func TestAccountService_Create_RequestValidationFailed_Names(t *testing.T) {
 
 	err = client.Accounts.Create(context.Background(), actual)
 	if err != nil {
-		assert.EqualError(t, err, "name attribute are mandatory for creating account")
+		assert.IsType(t, &f3client.ArgumentError{}, err)
+		assert.EqualError(t, err, "name : names are mandatory for account create request")
 	}
 
 	assert.Equal(t, expected, actual)
@@ -339,7 +356,10 @@ func TestAccountService_FetchAccount(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -389,7 +409,10 @@ func TestAccountService_DeleteAccount_NoContent(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -419,7 +442,10 @@ func TestAccountService_Fetch_NotFound(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -449,7 +475,10 @@ func TestAccountService_Delete_NotFound(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -479,7 +508,10 @@ func TestAccountService_Version_Conflict(t *testing.T) {
 
 	// client is the Form 3 API client being tested and is
 	// taking the mock server url.
-	client := f3client.NewClient(nil, server.URL)
+	client, err := f3client.NewClient(f3client.WithHostUrl(server.URL))
+	if err != nil {
+		panic(err)
+	}
 
 	// test code
 	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")

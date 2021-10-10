@@ -20,5 +20,8 @@ fmt :
 tidy :
 	go mod tidy
 
-internal_test: lint
-	go test -tags=internal_tests -v
+test.unit: lint
+	go test -tags=unit_tests -v
+
+test.integration: lint
+	go test -tags=integration_tests -v

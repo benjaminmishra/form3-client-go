@@ -1,5 +1,3 @@
-// The basic form3 client object that needs to be instanciated for every request being sent to form3 apis
-
 package f3client
 
 import (
@@ -13,6 +11,13 @@ import (
 	"net/url"
 )
 
+// f3client struct constants
+const (
+	UserAgent string = "form3-client-go/1.0.0"
+	Accepts   string = "application/vnd.api+json"
+)
+
+// Http methods
 const (
 	Get    string = "GET"
 	Put    string = "PUT"
@@ -20,12 +25,14 @@ const (
 	Delete string = "DELETE"
 )
 
+// The basic form3 client object that
+// needs to be instansiated for every request being sent to form3 apis
 type Client struct {
 	BaseURL    url.URL
 	common     service
 	HttpClient *http.Client
 	UserAgent  string
-	Version    string
+	Accepts    string
 
 	// Services for interacting with different parts of the API
 	Accounts *AccountService
@@ -35,53 +42,110 @@ type service struct {
 	client *Client
 }
 
-func NewClient(httpClient *http.Client, hostURL string) *Client {
+type Option func(*Client) error
 
-	if httpClient == nil {
-		httpClient = &http.Client{}
-	}
+// NewClient creates an f3client.Client instance
+//
+// If there is an error, non-nil error is returned and
+// the f3Cleint.Client is set to nil
+//
+// Accepts a variable number of f3client.Options functions
+// that configure the f3Client.Client instance as per their inputs
+// example f3Cleint.WithHostUrl , f3client.WithHttpClient
+func NewClient(options ...Option) (*Client, error) {
 
-	baseURL, _ := url.Parse(hostURL)
-	c := &Client{
-		BaseURL:    *baseURL,
-		HttpClient: httpClient,
-		UserAgent:  "form3-go-client",
-		Version:    "v1",
-	}
-
-	c.common.client = c
-	c.Accounts = (*AccountService)(&c.common)
-
-	return c
-}
-
-// NewRequest creates http.Request object and returns a pointer to it
-// if the request creation is not suceessful then it returns error and
-// the request object is returned as nil. It is a wrapper on http.NewRequest
-func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType string, body interface{}) (*http.Request, error) {
-
-	u, err := c.BaseURL.Parse(urlStr)
+	defaultBaseUrl, err := url.Parse("http://localhost:8080")
 	if err != nil {
 		return nil, err
 	}
+	defaultHttpClient := http.DefaultClient
 
-	var httpReq *http.Request
-	var encodedBody io.Reader
-	var contentLen int64
+	c := &Client{
+		BaseURL:    *defaultBaseUrl,
+		HttpClient: defaultHttpClient,
+		UserAgent:  UserAgent,
+		Accepts:    Accepts,
+	}
 
-	switch method {
+	for _, option := range options {
+		err := option(c)
+		if err != nil {
+			return c, err
+		}
+	}
 
-	case http.MethodGet, http.MethodOptions, http.MethodHead, http.MethodDelete:
-		encodedBody = nil
-		contentLen = 0
-	default:
-		requestBody, err := MarshalToRequestBody(body, objectType)
+	c.common.client = c
+
+	c.Accounts = &AccountService{
+		service:    c.common,
+		ObjectType: "accounts",
+	}
+
+	return c, nil
+}
+
+// WithHostUrl configures f3client.Client to add the constom url being passed
+func WithHostUrl(hostAddr string) Option {
+	f := func(c *Client) error {
+		baseUrl, err := url.Parse(hostAddr)
+		c.BaseURL = *baseUrl
+		return err
+	}
+	return f
+}
+
+// WithHttpClient confiures f3client.Client to override the default http.Clinet
+// and assigns the constom http.Client object being passed
+func WithHttpClient(customClient *http.Client) Option {
+	f := func(c *Client) error {
+		c.HttpClient = customClient
+		return nil
+	}
+	return f
+}
+
+// NewRequest creates http.Request object and returns a pointer to it
+//
+// if the request creation is not suceessful then it returns error and
+// the request object is returned as nil. It is a wrapper on http.NewRequest
+func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType string, body interface{}) (*http.Request, error) {
+	var u *url.URL
+	var err error
+
+	if urlStr != "" {
+		u, err = c.BaseURL.Parse(urlStr)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		return nil, NewArgError("urlStr", "urlStr cannot be empty")
+	}
 
-		encodedBody = bytes.NewReader((*requestBody))
-		contentLen = int64(len((*requestBody)))
+	var httpReq *http.Request
+	var encodedBody io.Reader = nil
+	var contentLen int64 = 0
+
+	if method != http.MethodGet && method != http.MethodOptions && method != http.MethodHead && method != http.MethodDelete {
+		// only aplicable for requests that require a body i.e. put,post , patch
+		var requestBody *[]byte
+		if objectType != "" && body != nil && body != "" {
+			requestBody, err = MarshalToRequestBody(body, objectType)
+
+			if err != nil {
+				return nil, err
+			}
+			encodedBody = bytes.NewReader((*requestBody))
+			contentLen = int64(len((*requestBody)))
+
+		}
+
+		if objectType == "" {
+			return nil, NewArgError("objectType", "objectType cannot be empty")
+		}
+
+		if body == "" || body == nil {
+			return nil, NewArgError("body", "body cannot nil or empty for Post requests")
+		}
 	}
 
 	httpReq, err = http.NewRequest(method, u.String(), encodedBody)
@@ -90,10 +154,19 @@ func (c *Client) NewRequest(ctx context.Context, method, urlStr, objectType stri
 	}
 
 	httpReq.ContentLength = contentLen
+	httpReq.Header.Add("Accepts", c.Accepts)
+	httpReq.Header.Add("User-Agent", c.UserAgent)
 
 	return httpReq, nil
 }
 
+// SendRequest executes the http request to the apis and returns their response
+//
+// An error is returned if there is any error in executing the request
+//
+// Arguments context object , pointer to http.Request object
+//
+// Returns f3cleint.Response struct, which contains the repose body
 func (c *Client) SendRequest(ctx context.Context, request *http.Request) (*Response, error) {
 	response := new(Response)
 	errorResponse := new(struct {

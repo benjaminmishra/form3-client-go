@@ -17,7 +17,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	client := f3client.NewClient(nil, "http://localhost:8080/")
+	client, err := f3client.NewClient()
+	if err != nil {
+		panic(err)
+	}
 
 	success, err := client.Accounts.Delete(ctx, accountId, 1)
 	if err != nil {

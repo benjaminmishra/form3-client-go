@@ -12,11 +12,11 @@ func MarshalToRequestBody(request interface{}, requestType string) (*[]byte, err
 
 	// validate arguments to the function
 	if request == nil {
-		return nil, fmt.Errorf("req cannot be nil")
+		return nil, NewArgError("request", "request cannot be nil")
 	}
 
 	if requestType == "" {
-		return nil, fmt.Errorf("requestType cannot be empty")
+		return nil, NewArgError("requestType", "requestType cannot be empty")
 	}
 
 	byteReq, err := json.Marshal(&request)
