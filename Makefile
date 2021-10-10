@@ -8,7 +8,7 @@ hello:
 	echo "Hello World"
 
 test: lint
-	go test -cover -v
+	go test ./... -cover -v
 
 lint: fmt | $(STATICCHECK)
 	go vet ./...
@@ -17,11 +17,6 @@ lint: fmt | $(STATICCHECK)
 fmt : 
 	go fmt ./...
 
-tidy :
-	go mod tidy
 
-test.unit: lint
-	go test -tags=unit_tests -v
-
-test.integration: lint
-	go test -tags=integration_tests -v
+doc : 
+	godoc -http=:6060

@@ -1,15 +1,16 @@
-package main
+package integration
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"testing"
 
-	"github.com/benjaminmishra/f3client"
+	f3client "github.com/benjaminmishra/form3-client-go/f3client"
 	"github.com/google/uuid"
 )
 
-func main() {
+func TestAccountService_Create(t *testing.T) {
 
 	ctx := context.Background()
 	// instantiate the client

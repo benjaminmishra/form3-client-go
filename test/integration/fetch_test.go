@@ -1,15 +1,16 @@
-package main
+package integration
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"testing"
 
-	"github.com/benjaminmishra/f3client"
+	f3client "github.com/benjaminmishra/form3-client-go/f3client"
 	"github.com/google/uuid"
 )
 
-func main() {
+func TestAccountService_Fetch(t *testing.T) {
 
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")

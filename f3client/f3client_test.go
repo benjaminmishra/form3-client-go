@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/benjaminmishra/f3client"
+	f3client "github.com/benjaminmishra/form3-client-go/f3client"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,6 +48,7 @@ func TestNewClient_CustomHttpClient(t *testing.T) {
 }
 
 // ------------- f3client NewRequest function unit tests -------------//
+
 func TestNewRequest_WithoutUrlStr(t *testing.T) {
 	c, err := f3client.NewClient()
 	if err != nil {
@@ -100,8 +101,18 @@ func TestNewRequest_Put_EmptyRequestBody(t *testing.T) {
 
 }
 
-
-
-
-
 // -------- f3client SendRequest function unit tests ---------------- //
+
+func TestSendRequest_EmptyRequest(t *testing.T) {
+
+	c, err := f3client.NewClient()
+	if err != nil {
+		panic(err)
+	}
+	_, err = c.SendRequest(context.Background(), &http.Request{})
+
+	if assert.Error(t, err) {
+		assert.EqualError(t, err, "Get \"\": http: nil Request.URL")
+	}
+
+}

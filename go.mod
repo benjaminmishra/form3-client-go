@@ -1,4 +1,4 @@
-module github.com/benjaminmishra/f3client
+module github.com/benjaminmishra/form3-client-go
 
 go 1.17
 

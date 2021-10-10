@@ -5,6 +5,9 @@ import (
 	"fmt"
 )
 
+// MarshalToRequestBody converts a givven request object to []byte in preparation for making http request
+// returns a *[]byte if no error, otherwise returns an non-nil error
+// It also accepts the request object type in string format
 func MarshalToRequestBody(request interface{}, requestType string) (*[]byte, error) {
 
 	inInteface := make(map[string]interface{})

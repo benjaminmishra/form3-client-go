@@ -49,6 +49,10 @@ type AccountAttributes struct {
 	Status                  string   `json:"status,omitempty"`
 }
 
+// Create creates an account using form3 account api
+//
+// For details related to the attributes required can be found
+// https://api-docs.form3.tech/api.html#organisation-accounts-create
 func (as *AccountService) Create(ctx context.Context, account *Account) error {
 	var err error
 
@@ -81,6 +85,9 @@ func (as *AccountService) Create(ctx context.Context, account *Account) error {
 	return nil
 }
 
+// Fetch gets form3 account object, it required account id to be passed
+//
+// For more details visit https://api-docs.form3.tech/api.html#organisation-accounts-fetch
 func (as *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Account, error) {
 
 	acc := new(Account)
@@ -105,6 +112,11 @@ func (as *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Acco
 	return acc, nil
 }
 
+// Delete delets a form3 account from form3's database
+// Needs the account Id (uuid) and account version (int) to be supplied
+//
+// For more details regarding fields and errors returned visit
+// https://api-docs.form3.tech/api.html#organisation-accounts-delete
 func (as *AccountService) Delete(ctx context.Context, accountId uuid.UUID, accountVersion int) (bool, error) {
 	path := "/v1/organisation/accounts/" + accountId.String() + "?version=" + fmt.Sprint(accountVersion)
 
