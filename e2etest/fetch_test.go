@@ -1,4 +1,4 @@
-package integration
+package e2etest
 
 import (
 	"context"
