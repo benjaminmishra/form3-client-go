@@ -108,6 +108,189 @@ func TestAccountService_CreateAccount(t *testing.T) {
 	assert.Equal(t, expected, *actual)
 }
 
+func TestAccountService_Create_RequestValidationFailed_ID(t *testing.T) {
+	// mock the server and json response
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Dummy response"))
+	}))
+
+	// close the server once this test is done executing
+	defer server.Close()
+
+	// client is the Form 3 API client being tested and is
+	// taking the mock server url.
+	client := f3client.NewClient(nil, server.URL)
+
+	// test code
+	organisationUUID, _ := uuid.Parse("ee2fb143-6dfe-4787-b183-de8ddd4164d1")
+
+	// create request that needs to be passed
+	actual := &f3client.Account{
+		OrganisationID: organisationUUID,
+		Attributes: f3client.AccountAttributes{
+			Country: "US",
+			Name:    []string{"Jon Doe", "Jane Doe"},
+		},
+	}
+
+	expected := &f3client.Account{
+		OrganisationID: organisationUUID,
+		Attributes: f3client.AccountAttributes{
+			Country: "US",
+			Name:    []string{"Jon Doe", "Jane Doe"},
+		},
+	}
+
+	err := client.Accounts.Create(context.Background(), actual)
+	if err != nil {
+		assert.EqualError(t, err, "id is mandatory in the request body")
+	}
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestAccountService_Create_RequestValidationFailed_OrganisationID(t *testing.T) {
+	// mock the server and json response
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Dummy response"))
+	}))
+
+	// close the server once this test is done executing
+	defer server.Close()
+
+	// client is the Form 3 API client being tested and is
+	// taking the mock server url.
+	client := f3client.NewClient(nil, server.URL)
+
+	// test code
+	accountid, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
+	if err != nil {
+		assert.FailNow(t, "failed with error : "+err.Error())
+	}
+
+	// create request that needs to be passed
+	actual := &f3client.Account{
+		ID: accountid,
+		Attributes: f3client.AccountAttributes{
+			Country: "US",
+			Name:    []string{"Jon Doe", "Jane Doe"},
+		},
+	}
+
+	expected := &f3client.Account{
+		ID: accountid,
+		Attributes: f3client.AccountAttributes{
+			Country: "US",
+			Name:    []string{"Jon Doe", "Jane Doe"},
+		},
+	}
+
+	err = client.Accounts.Create(context.Background(), actual)
+	if err != nil {
+		assert.EqualError(t, err, "organisation_id is mandatory in the request body")
+	}
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestAccountService_Create_RequestValidationFailed_Country(t *testing.T) {
+	// mock the server and json response
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Dummy response"))
+	}))
+
+	// close the server once this test is done executing
+	defer server.Close()
+
+	// client is the Form 3 API client being tested and is
+	// taking the mock server url.
+	client := f3client.NewClient(nil, server.URL)
+
+	// test code
+	accountid, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
+	if err != nil {
+		panic(err)
+	}
+
+	organisationid, err := uuid.Parse("ee2fb143-6dfe-4787-b183-de8ddd4164d1")
+	if err != nil {
+		panic(err)
+	}
+
+	// create request that needs to be passed
+	actual := &f3client.Account{
+		ID:             accountid,
+		OrganisationID: organisationid,
+		Attributes: f3client.AccountAttributes{
+			Name: []string{"Jon Doe", "Jane Doe"},
+		},
+	}
+
+	expected := &f3client.Account{
+		ID:             accountid,
+		OrganisationID: organisationid,
+		Attributes: f3client.AccountAttributes{
+			Name: []string{"Jon Doe", "Jane Doe"},
+		},
+	}
+
+	err = client.Accounts.Create(context.Background(), actual)
+	if err != nil {
+		assert.EqualError(t, err, "country attribute is mandatory for creating account")
+	}
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestAccountService_Create_RequestValidationFailed_Names(t *testing.T) {
+	// mock the server and json response
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Dummy response"))
+	}))
+
+	// close the server once this test is done executing
+	defer server.Close()
+
+	// client is the Form 3 API client being tested and is
+	// taking the mock server url.
+	client := f3client.NewClient(nil, server.URL)
+
+	// test code
+	accountid, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
+	if err != nil {
+		panic(err)
+	}
+
+	organisationid, err := uuid.Parse("ee2fb143-6dfe-4787-b183-de8ddd4164d1")
+	if err != nil {
+		panic(err)
+	}
+
+	// create request that needs to be passed
+	actual := &f3client.Account{
+		ID:             accountid,
+		OrganisationID: organisationid,
+		Attributes: f3client.AccountAttributes{
+			Country: "IN",
+		},
+	}
+
+	expected := &f3client.Account{
+		ID:             accountid,
+		OrganisationID: organisationid,
+		Attributes: f3client.AccountAttributes{
+			Country: "IN",
+		},
+	}
+
+	err = client.Accounts.Create(context.Background(), actual)
+	if err != nil {
+		assert.EqualError(t, err, "name attribute are mandatory for creating account")
+	}
+
+	assert.Equal(t, expected, actual)
+}
+
 func TestAccountService_FetchAccount(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -225,6 +408,10 @@ func TestAccountService_Fetch_NotFound(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{
+			"error_code": "Not Found",
+			"error_message": "Account Not Found"
+			}`))
 	}))
 
 	// close the server once this test is done executing
@@ -239,8 +426,70 @@ func TestAccountService_Fetch_NotFound(t *testing.T) {
 
 	actual, err := client.Accounts.Fetch(context.Background(), resourceUUID)
 	if err != nil {
-		assert.EqualError(t, err, "Not found")
+		assert.EqualError(t, err, "Account Not Found")
 	}
 
-	assert.Equal(t, *new(f3client.Account), actual)
+	expected := new(f3client.Account)
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestAccountService_Delete_NotFound(t *testing.T) {
+	// mock the server and json response
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{
+			"error_code": "Not Found",
+			"error_message": "Account Not Found"
+			}`))
+	}))
+
+	// close the server once this test is done executing
+	defer server.Close()
+
+	// client is the Form 3 API client being tested and is
+	// taking the mock server url.
+	client := f3client.NewClient(nil, server.URL)
+
+	// test code
+	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
+
+	actual, err := client.Accounts.Delete(context.Background(), resourceUUID, 0)
+	if err != nil {
+		assert.EqualError(t, err, "Account Not Found")
+	}
+
+	expected := false
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestAccountService_Version_Conflict(t *testing.T) {
+	// mock the server and json response
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte(`{
+			"error_code": "Conflict",
+			"error_message": "Specified version incorrect"
+			}`))
+	}))
+
+	// close the server once this test is done executing
+	defer server.Close()
+
+	// client is the Form 3 API client being tested and is
+	// taking the mock server url.
+	client := f3client.NewClient(nil, server.URL)
+
+	// test code
+	resourceUUID, _ := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
+
+	actual, err := client.Accounts.Delete(context.Background(), resourceUUID, 1)
+	if err != nil {
+		assert.EqualError(t, err, "Specified version incorrect")
+	}
+
+	expected := false
+
+	assert.Equal(t, expected, actual)
 }

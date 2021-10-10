@@ -5,6 +5,7 @@ package f3client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -50,11 +51,20 @@ func (as *AccountService) Create(ctx context.Context, account *Account) error {
 
 	path := as.client.Version + "/organisation/accounts"
 
+	// validate for mandatory account fields before creating new request
+	if account.Attributes.Country == "" {
+		return errors.New("country attribute is mandatory for creating account")
+	} else if account.Attributes.Name == nil {
+		return errors.New("name attribute are mandatory for creating account")
+	}
+
+	// create new request
 	req, err := as.client.NewRequest(ctx, Post, path, "accounts", account)
 	if err != nil {
 		return err
 	}
 
+	// send the request and catch the response
 	resp, err := as.client.SendRequest(ctx, req)
 	if err != nil {
 		return err
@@ -76,12 +86,12 @@ func (as *AccountService) Fetch(ctx context.Context, accountId uuid.UUID) (*Acco
 
 	req, err := as.client.NewRequest(ctx, Get, path, "accounts", nil)
 	if err != nil {
-		return nil, err
+		return acc, err
 	}
 
 	resp, err := as.client.SendRequest(ctx, req)
 	if err != nil {
-		return nil, err
+		return acc, err
 	}
 
 	err = resp.ConvertTo(acc)

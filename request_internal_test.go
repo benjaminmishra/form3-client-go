@@ -1,6 +1,3 @@
-//go:build internal_tests
-// +build internal_tests
-
 package f3client
 
 import (
