@@ -2,7 +2,7 @@ STATICCHECK = $(GOPATH)/bin/staticcheck
 
 
 $(STATICCHECK):
-	go install honnef.co/go/tools/cmd/staticcheck
+	go get honnef.co/go/tools/cmd/staticcheck
 
 hello:
 	echo "Hello World"
