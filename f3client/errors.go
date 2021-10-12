@@ -1,6 +1,8 @@
 package f3client
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // ArgumentError is raised when the called of a function in this library misses
 // to pass an mandatory argument or misses to pass a mandatory field in a request
@@ -22,4 +24,12 @@ func NewArgError(missingArg string, validationMsg string) *ArgumentError {
 
 func (ae *ArgumentError) Error() string {
 	return fmt.Sprintf("%s : %s", ae.arg, ae.message)
+}
+
+type Error struct {
+	message string
+}
+
+func (e *Error) Error() string {
+	return e.message
 }

@@ -1,3 +1,6 @@
+//go:build !integration
+// +build !integration
+
 package f3client_test
 
 import (
@@ -38,7 +41,9 @@ func ExampleAccountService_Create() {
 	}
 
 	err = c.Accounts.Create(bctx, &account)
-	//handle error
+	if err != nil {
+
+	}
 
 	// use the account object for further operations
 }

@@ -56,9 +56,11 @@ func TestNewRequest_WithoutUrlStr(t *testing.T) {
 	}
 	_, err = c.NewRequest(context.Background(), f3client.Get, "", c.Accounts.ObjectType, nil)
 
-	assert.Error(t, err)
+	var targetErr *f3client.ArgumentError
 
-	assert.Equal(t, "urlStr : urlStr cannot be empty", err.Error())
+	if assert.Error(t, err) {
+		assert.ErrorAs(t, err, &targetErr)
+	}
 
 }
 
@@ -69,9 +71,11 @@ func TestNewRequest_WithoutObjectType(t *testing.T) {
 	}
 	_, err = c.NewRequest(context.Background(), f3client.Post, "/v1/org/acc", "", &f3client.Account{})
 
-	assert.Error(t, err)
+	var targetErr *f3client.ArgumentError
 
-	assert.Equal(t, "objectType : objectType cannot be empty", err.Error())
+	if assert.Error(t, err) {
+		assert.ErrorAs(t, err, &targetErr)
+	}
 
 }
 
@@ -82,9 +86,11 @@ func TestNewRequest_Post_NilRequestBody(t *testing.T) {
 	}
 	_, err = c.NewRequest(context.Background(), f3client.Post, "/v1/org/acc", c.Accounts.ObjectType, nil)
 
-	assert.Error(t, err)
+	var targetErr *f3client.ArgumentError
 
-	assert.Equal(t, "body : body cannot nil or empty for Post requests", err.Error())
+	if assert.Error(t, err) {
+		assert.ErrorAs(t, err, &targetErr)
+	}
 
 }
 
@@ -95,9 +101,11 @@ func TestNewRequest_Put_EmptyRequestBody(t *testing.T) {
 	}
 	_, err = c.NewRequest(context.Background(), f3client.Put, "/v1/org/acc", c.Accounts.ObjectType, "")
 
-	assert.Error(t, err)
+	var targetErr *f3client.ArgumentError
 
-	assert.Equal(t, "body : body cannot nil or empty for Post requests", err.Error())
+	if assert.Error(t, err) {
+		assert.ErrorAs(t, err, &targetErr)
+	}
 
 }
 
@@ -111,8 +119,9 @@ func TestSendRequest_EmptyRequest(t *testing.T) {
 	}
 	_, err = c.SendRequest(context.Background(), &http.Request{})
 
+	var targetErr *url.Error
 	if assert.Error(t, err) {
-		assert.EqualError(t, err, "Get \"\": http: nil Request.URL")
+		assert.ErrorAs(t, err, &targetErr)
 	}
 
 }
