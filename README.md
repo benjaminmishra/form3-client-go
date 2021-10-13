@@ -3,7 +3,7 @@ This library wraps the [form3 v1 apis](https://api-docs.form3.tech/api.html) int
 
 Currently the f3client libray requires go version 1.17.2 or greater.
 
-The structure of the library is inspired by the followig projects and borrows some ideas from them.
+The structure of the library is inspired by the followig projects and borrows some ideas from them also the structure of this document is borrowed from them.
 - [go-github](https://github.com/google/go-github)
 - [twillio-go](https://github.com/kevinburke/twilio-go)
 - [godo](https://github.com/digitalocean/godo)
@@ -20,17 +20,17 @@ Also it follows advice from the following blog posts about semantics
 f3client is compatable with module mode in modern Go release. In order to get this module add the follwoing to your code and run go get.
 
 ``` go
-import github.com/benjaminmishra/form3-client-go/v0.0.1
+import github.com/benjaminmishra/form3-client-go/v1.0.0-alpha
 ```
 Alternatively you can just run the following in your project root directory and start importing in your code.
 ```bash
-go get github.com/benjaminmishra/form3-client-go/v0.0.1
+go get github.com/benjaminmishra/form3-client-go/v1.0.0-alpha
 ```
 
 ## Usage
 Import the module 
 ``` go
-import github.com/benjaminmishra/form3-client-go/v0.0.1/f3client // with go modules enabled (GO111MODULE=on or outside GOPATH
+import github.com/benjaminmishra/form3-client-go/v1.0.0-alpha/f3client // with go modules enabled (GO111MODULE=on or outside GOPATH
 import github.com/benjaminmishra/form3-client-go/f3client // with go modules disabled
 ```
 

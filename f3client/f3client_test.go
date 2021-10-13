@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	f3client "github.com/benjaminmishra/form3-client-go/v0.0.1/f3client"
+	f3client "github.com/benjaminmishra/form3-client-go/v1.0.0-alpha/f3client"
 	"github.com/stretchr/testify/assert"
 )
 
