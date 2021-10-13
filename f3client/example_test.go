@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/benjaminmishra/form3-client-go/v1.0.0-beta.2/f3client"
+	"github.com/benjaminmishra/form3-client-go/v1/f3client"
 	"github.com/google/uuid"
 )
 
