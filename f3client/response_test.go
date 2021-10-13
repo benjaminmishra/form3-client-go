@@ -1,6 +1,3 @@
-//go:build unit
-// +build unit
-
 package f3client_test
 
 import (

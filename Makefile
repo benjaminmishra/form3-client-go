@@ -1,4 +1,9 @@
 STATICCHECK = $(GOPATH)/bin/staticcheck
+export PSQL_USER=root
+export PSQL_PASSWORD=password
+export PSQL_HOST=0.0.0.0
+export PSQL_PORT=5432
+export API_HOST=http://localhost:8080
 
 
 $(STATICCHECK):
@@ -7,37 +12,23 @@ $(STATICCHECK):
 $(GODOC):
 	go get -v  golang.org/x/tools/cmd/godoc
 
-$(EXPORT):
-	export PSQL_USER=root
-	export PSQL_PASSWORD=password
-	export PSQL_HOST=0.0.0.0
-	export PSQL_PORT=5432
-	export API_HOST=http://localhost:8080
+deps:
+	go mod download
 
-$(UNSET):
-	unset PSQL_USER
-	unset PSQL_PASSWORD
-	unset PSQL_HOST
-	unset PSQL_PORT
-	unset API_HOST
-
-
-test: lint test.unit test.integration
+test: test.unit test.integration
 
 test.unit: lint
 	go test ./f3client/... -run=^Test_Unit_ -cover -v
 
-test.integration: lint api.start
-	$(EXPORT)
+test.integration: deps lint api.start
 	go test ./f3client/... -p 1 -run=^Test_Integration_ -v -cover
-	$(UNSET)
 	docker compose -f docker-compose.test.yml down --volumes
 
 lint: fmt | $(STATICCHECK)
 	go vet ./f3client/...
 	$(STATICCHECK) ./f3client/...
 
-fmt :
+fmt : deps
 	go fmt ./f3client/...
 
 doc :
@@ -49,3 +40,13 @@ api.start:
 
 api.stop:
 	docker compose -f docker-compose.test.yml down --volumes
+
+
+docker.cleanup:
+	docker compose down
+	docker image rmi form3-client-go_accountapi_client
+
+
+test.cover:
+	go tool cover -html=./test_results/unitcover.out
+	go tool cover -html=./test_results/itcover.out

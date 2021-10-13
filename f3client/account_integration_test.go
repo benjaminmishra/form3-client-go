@@ -48,7 +48,7 @@ func setup() (func(), error) {
 		db.Close()
 	}
 
-	/// make sure to start with a clean table
+	/// start with a clean table
 	_, err = db.Exec("delete from public.\"Account\"")
 	if err != nil {
 		return func() { db.Close() }, err
@@ -73,7 +73,6 @@ func setup() (func(), error) {
 	}
 
 	// return a teardown function, that is later used to cleanup the db
-
 	return teardown, nil
 }
 

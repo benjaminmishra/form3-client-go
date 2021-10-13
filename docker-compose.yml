@@ -68,6 +68,8 @@ services:
       - PSQL_HOST=postgresql
       - PSQL_PORT=5432
       - API_HOST=http://accountapi:8080
+    volumes:
+      - ./test_results:/form3-client-go/results/
     networks:
       - form3-accountapi-client-test
       
