@@ -13,6 +13,7 @@ Also it follows advice from the following blog posts about semantics
 - [Josh Michielsen's article about api clients for humans](https://blog.gopheracademy.com/advent-2019/api-clients-humans/)
 - [George Shaw's two part article on integration testing with docker](https://www.ardanlabs.com/blog/2019/03/integration-testing-in-go-executing-tests-with-docker.html)
 
+>Note for reviwer: I am fairly new to using go and wirting open source libraries in general. Hence have heavily relied on blogs metioned above.
 
 ## Installation
 
