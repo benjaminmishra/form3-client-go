@@ -103,7 +103,7 @@ Note that you need to have GNU make installed on your system. Also docker and do
    - run ```make docker.cleanup``` in the root directory of the codebase.
 
 ## Versioning
-This library follows semver at a high level. At this moment this is labelled as minor version 1.
+This library follows semver. At this moment this is labelled as v1.0.0-alpha release.
 
 
 ## Features yet to be implemened and issues
