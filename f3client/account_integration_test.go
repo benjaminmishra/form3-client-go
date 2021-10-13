@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	f3client "github.com/benjaminmishra/form3-client-go/v1.0.0-beta/f3client"
+	f3client "github.com/benjaminmishra/form3-client-go/v1.0.0-beta.1/f3client"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
