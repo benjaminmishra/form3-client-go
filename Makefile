@@ -31,6 +31,7 @@ test.unit: lint
 
 # run only for integration tests
 # has 5 sec sleep to allow for the containes and apis to start up
+# Note : In case you are running this on windows change "sleep 5" to "timeout 5"
 test.integration: deps lint | api.start
 	sleep 5
 	go test ./f3client/... -p 1 -run=^Test_Integration_ -v -coverprofile=./test_results/itcover.out
@@ -49,14 +50,14 @@ doc :
 	godoc -http=:6060
 
 api.start:
-	docker compose -f docker-compose.test.yml up -d
+	docker-compose -f docker-compose.test.yml up -d
 
 api.stop:
-	docker compose -f docker-compose.test.yml down --volumes
+	docker-compose -f docker-compose.test.yml down --volumes
 
 
 docker.cleanup:
-	docker compose down
+	docker-compose down
 	docker image rmi form3-client-go_accountapi_client
 
 # use this to analyse the test coverage results in html format
