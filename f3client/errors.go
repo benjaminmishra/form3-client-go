@@ -25,11 +25,3 @@ func NewArgError(missingArg string, validationMsg string) *ArgumentError {
 func (ae *ArgumentError) Error() string {
 	return fmt.Sprintf("%s : %s", ae.arg, ae.message)
 }
-
-type Error struct {
-	message string
-}
-
-func (e *Error) Error() string {
-	return e.message
-}

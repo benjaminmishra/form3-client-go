@@ -1,0 +1,1 @@
+Do not delete this folder as this is the destination folder for the code coverage results to be created.

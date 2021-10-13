@@ -3,7 +3,7 @@ package f3client_test
 import (
 	"testing"
 
-	"github.com/benjaminmishra/form3-client-go/f3client"
+	"github.com/benjaminmishra/form3-client-go/v0.0.1/f3client"
 	"github.com/stretchr/testify/assert"
 )
 
