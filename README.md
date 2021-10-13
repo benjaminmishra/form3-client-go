@@ -44,10 +44,10 @@ c, err := f3client.NewClient()
 //
 // this returns a account object and nil error
 // in case of error account is nil and err is non-nil
-account, err := client.Accounts.Fetch(ctx, accountId)
+account, err := client.Accounts.Fetch(context.Background(), accountId)
 ```
 
-The create api needs an pointer to an instance of f3clinet.account struct to be passed in order for get the full details of the acocunt. Note that in all cases the account id and/or organisation id is mandatort.
+The create api needs an pointer to an instance of f3clinet.account struct to be passed in order for get the full details of the acocunt. Note that in all cases the account id and/or organisation id is mandatory.
 For example :
 
 ```go
@@ -59,15 +59,16 @@ account := f3client.Account{
 		Name:    []string{"jane doe", "john doe"},
     },
 }
-
+// bctx is background context 
+bctx := context.Background()
 err = c.Accounts.Create(bctx, &account)
 ```
-More details on each fields can be found in the form3 api documentation for individual apis.
+More details on each fields can be found in the form3 api documentation for apis.
 
 ## Tests
 I have relied heavily on makefile to automate the running of both integration and unit tests for this module. You can run the tests both directly from your system or using docker compose up command. The steps for each of them is described below.
 
-Note that you need to have GNU make installed on your system. Also docker and docker compose needs to 
+Note that you need to have GNU make installed on your system. Also docker and docker compose need to installed and the docker engine needs to be running.
 
 ### Running tests directly on your system:
 *__Prerequisites__ : GNU Make, go version 1.17 and higher, docker , docker compose, docker engine running*
