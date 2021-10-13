@@ -17,3 +17,4 @@
 .gitignore
 .vscode/dryrun.log
 .vscode/targets.log
+.vscode/

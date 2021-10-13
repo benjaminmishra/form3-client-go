@@ -25,22 +25,33 @@ var (
 	apihost  string = os.Getenv("API_HOST")
 )
 
-func TestMain(m *testing.M) {
-	os.Exit(testMain(m))
-}
-
-func testMain(m *testing.M) int {
+// setup func inserts records into the database before running the test case
+// it returns an function that can then be used to cleanup the database after the tests are done
+// if there is an error setting up the database then this function returns an err and a teardown func
+// that only warps db.close() method
+func setup() (func(), error) {
 	// setup test data in db before running integration tests
 	psqlConn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", psqlConn)
 	if err != nil {
-		panic(err)
+		return func() { db.Close() }, err
 	}
+
+	// define teardown func , to be used later to cleanup db
+	teardown := func() {
+		// clean up the table after test
+		_, err = db.Exec("delete from public.\"Account\"")
+		if err != nil {
+			db.Close()
+		}
+		db.Close()
+	}
+
 	/// make sure to start with a clean table
 	_, err = db.Exec("delete from public.\"Account\"")
 	if err != nil {
-		panic(err)
+		return func() { db.Close() }, err
 	}
 
 	// insert your record
@@ -58,25 +69,23 @@ func testMain(m *testing.M) int {
 		time.Now(),
 		"{\"bic\": \"NWBKGB22\", \"name\": [\"hello world\"], \"bank_id\": \"400300\", \"country\": \"GB\", \"bank_id_code\": \"GBDSC\", \"base_currency\": \"GBP\", \"alternative_bank_account_names\": [\"abc\"]}")
 	if err != nil {
-		panic(err)
+		return teardown, err
 	}
 
-	// run tests
-	exitVal := m.Run()
+	// return a teardown function, that is later used to cleanup the db
 
-	// clean up the table after test
-	_, err = db.Exec("delete from public.\"Account\"")
-	if err != nil {
-		panic(err)
-	}
-	db.Close()
-	return exitVal
-
+	return teardown, nil
 }
 
 // --------------------- Create account method --------------------------- //
 
 func Test_Integration_AccountService_Create(t *testing.T) {
+
+	teardown, err := setup()
+	if err != nil {
+		panic(err)
+	}
+	defer teardown()
 
 	ctx := context.Background()
 	// instantiate the client
@@ -144,6 +153,12 @@ func Test_Integration_AccountService_Create(t *testing.T) {
 
 func Test_Integration_AccountService_Create_EmptyBody(t *testing.T) {
 
+	teardown, err := setup()
+	if err != nil {
+		panic(err)
+	}
+	defer teardown()
+
 	ctx := context.Background()
 	// instantiate the client
 	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
@@ -176,6 +191,12 @@ func Test_Integration_AccountService_Create_EmptyBody(t *testing.T) {
 
 func Test_Integration_AccountService_Fetch(t *testing.T) {
 
+	teardown, err := setup()
+	if err != nil {
+		panic(err)
+	}
+	defer teardown()
+
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
 	if err != nil {
@@ -195,6 +216,12 @@ func Test_Integration_AccountService_Fetch(t *testing.T) {
 }
 
 func Test_Integration_AccountService_Fetch_NotFound(t *testing.T) {
+
+	teardown, err := setup()
+	if err != nil {
+		panic(err)
+	}
+	defer teardown()
 
 	ctx := context.Background()
 	accountId, err := uuid.NewRandom()
@@ -219,6 +246,12 @@ func Test_Integration_AccountService_Fetch_NotFound(t *testing.T) {
 
 func Test_Integration_AccountService_Delete(t *testing.T) {
 
+	teardown, err := setup()
+	if err != nil {
+		panic(err)
+	}
+	defer teardown()
+
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
 	if err != nil {
@@ -239,6 +272,12 @@ func Test_Integration_AccountService_Delete(t *testing.T) {
 }
 
 func Test_Integration_AccountService_Delete_WrongVersion(t *testing.T) {
+
+	teardown, err := setup()
+	if err != nil {
+		panic(err)
+	}
+	defer teardown()
 
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")

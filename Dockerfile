@@ -9,7 +9,8 @@ WORKDIR /form3-client-go
 COPY . .
 
 RUN CGO_ENABLED=0 go get ./...
-CMD ["make","test"]
+RUN go test ./f3client/... -run=^Test_Unit_ -cover -v
+RUN go test ./f3client/... -p 1 -run=^Test_Integration_ -v -cover
 
 
 

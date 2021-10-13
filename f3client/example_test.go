@@ -1,6 +1,3 @@
-//go:build !integration
-// +build !integration
-
 package f3client_test
 
 import (
@@ -8,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	f3client "github.com/benjaminmishra/form3-client-go/f3client"
+	"github.com/benjaminmishra/form3-client-go/f3client"
 	"github.com/google/uuid"
 )
 
@@ -26,10 +23,14 @@ func ExampleAccountService_Create() {
 	// ID , OrganisationID , Country, Name are mandatory while
 	// doing a create request
 	accountId, err := uuid.NewRandom()
-	// handle error
+	if err != nil {
+		panic(err)
+	}
 
 	orgId, err := uuid.NewRandom()
-	// handle error
+	if err != nil {
+		panic(err)
+	}
 
 	account := f3client.Account{
 		ID:             accountId,
@@ -42,7 +43,7 @@ func ExampleAccountService_Create() {
 
 	err = c.Accounts.Create(bctx, &account)
 	if err != nil {
-
+		panic(err)
 	}
 
 	// use the account object for further operations
