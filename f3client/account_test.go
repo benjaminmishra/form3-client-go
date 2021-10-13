@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAccountService_CreateAccount(t *testing.T) {
+func Test_Unit_AccountService_CreateAccount(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
@@ -111,7 +111,7 @@ func TestAccountService_CreateAccount(t *testing.T) {
 	assert.Equal(t, expected, *actual)
 }
 
-func TestAccountService_Create_RequestValidationFailed_ID(t *testing.T) {
+func Test_Unit_AccountService_Create_RequestValidationFailed_ID(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Dummy response"))
@@ -155,7 +155,7 @@ func TestAccountService_Create_RequestValidationFailed_ID(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestAccountService_Create_RequestValidationFailed_OrganisationID(t *testing.T) {
+func Test_Unit_AccountService_Create_RequestValidationFailed_OrganisationID(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Dummy response"))
@@ -202,7 +202,7 @@ func TestAccountService_Create_RequestValidationFailed_OrganisationID(t *testing
 	assert.Equal(t, expected, actual)
 }
 
-func TestAccountService_Create_RequestValidationFailed_Country(t *testing.T) {
+func Test_Unit_AccountService_Create_RequestValidationFailed_Country(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Dummy response"))
@@ -255,7 +255,7 @@ func TestAccountService_Create_RequestValidationFailed_Country(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestAccountService_Create_RequestValidationFailed_Names(t *testing.T) {
+func Test_Unit_AccountService_Create_RequestValidationFailed_Names(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Dummy response"))
@@ -308,7 +308,7 @@ func TestAccountService_Create_RequestValidationFailed_Names(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestAccountService_FetchAccount(t *testing.T) {
+func Test_Unit_AccountService_FetchAccount(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
@@ -398,7 +398,7 @@ func TestAccountService_FetchAccount(t *testing.T) {
 	assert.Equal(t, expected, *actual)
 }
 
-func TestAccountService_DeleteAccount_NoContent(t *testing.T) {
+func Test_Unit_AccountService_DeleteAccount_NoContent(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)

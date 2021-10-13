@@ -82,7 +82,8 @@ func Test_Integration_AccountService_Create(t *testing.T) {
 
 	teardown, err := setup()
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer teardown()
 
@@ -90,16 +91,19 @@ func Test_Integration_AccountService_Create(t *testing.T) {
 	// instantiate the client
 	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 
 	accountId, err := uuid.NewRandom()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 	orgId, err := uuid.NewUUID()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 	// create new account object
 	newAccount := f3client.Account{
@@ -120,7 +124,8 @@ func Test_Integration_AccountService_Create(t *testing.T) {
 	// call the create account api
 	err = client.Accounts.Create(ctx, &newAccount)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 
 	expected := f3client.Account{
@@ -154,7 +159,8 @@ func Test_Integration_AccountService_Create_EmptyBody(t *testing.T) {
 
 	teardown, err := setup()
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer teardown()
 
@@ -162,7 +168,8 @@ func Test_Integration_AccountService_Create_EmptyBody(t *testing.T) {
 	// instantiate the client
 	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 
 	_, err = uuid.NewRandom()
@@ -171,7 +178,8 @@ func Test_Integration_AccountService_Create_EmptyBody(t *testing.T) {
 	}
 	_, err = uuid.NewUUID()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 
 	// create new account object
@@ -192,7 +200,8 @@ func Test_Integration_AccountService_Fetch(t *testing.T) {
 
 	teardown, err := setup()
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer teardown()
 
@@ -204,7 +213,8 @@ func Test_Integration_AccountService_Fetch(t *testing.T) {
 
 	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	account, err := client.Accounts.Fetch(ctx, accountId)
 	if err != nil {
@@ -218,14 +228,16 @@ func Test_Integration_AccountService_Fetch_NotFound(t *testing.T) {
 
 	teardown, err := setup()
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer teardown()
 
 	ctx := context.Background()
 	accountId, err := uuid.NewRandom()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 
 	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
@@ -247,19 +259,22 @@ func Test_Integration_AccountService_Delete(t *testing.T) {
 
 	teardown, err := setup()
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer teardown()
 
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 
 	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 
 	success, err := client.Accounts.Delete(ctx, accountId, 0)
@@ -274,19 +289,22 @@ func Test_Integration_AccountService_Delete_WrongVersion(t *testing.T) {
 
 	teardown, err := setup()
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 	defer teardown()
 
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
+		return
 	}
 
 	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
+		return
 	}
 
 	_, err = client.Accounts.Delete(ctx, accountId, 1)
