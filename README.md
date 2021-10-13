@@ -20,17 +20,17 @@ Also it follows advice from the following blog posts about semantics
 f3client is compatable with module mode in modern Go release. In order to get this module add the follwoing to your code and run go get.
 
 ``` go
-import github.com/benjaminmishra/form3-client-go/v1.0.0-alpha
+import github.com/benjaminmishra/form3-client-go/v1.0.0-beta.2
 ```
 Alternatively you can just run the following in your project root directory and start importing in your code.
 ```bash
-go get github.com/benjaminmishra/form3-client-go/v1.0.0-alpha
+go get github.com/benjaminmishra/form3-client-go/v1.0.0-beta.2
 ```
 
 ## Usage
 Import the module 
 ``` go
-import github.com/benjaminmishra/form3-client-go/v1.0.0-alpha/f3client // with go modules enabled (GO111MODULE=on or outside GOPATH
+import github.com/benjaminmishra/form3-client-go/v1.0.0-beta.2/f3client // with go modules enabled (GO111MODULE=on or outside GOPATH
 import github.com/benjaminmishra/form3-client-go/f3client // with go modules disabled
 ```
 
