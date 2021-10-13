@@ -427,7 +427,7 @@ func TestAccountService_DeleteAccount_NoContent(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestAccountService_Fetch_NotFound(t *testing.T) {
+func Test_Unit_AccountService_Fetch_NotFound(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
@@ -460,7 +460,7 @@ func TestAccountService_Fetch_NotFound(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestAccountService_Delete_NotFound(t *testing.T) {
+func Test_Unit_AccountService_Delete_NotFound(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
@@ -493,7 +493,7 @@ func TestAccountService_Delete_NotFound(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestAccountService_Version_Conflict(t *testing.T) {
+func Test_Unit_AccountService_Version_Conflict(t *testing.T) {
 	// mock the server and json response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)

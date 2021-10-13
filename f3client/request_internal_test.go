@@ -1,3 +1,6 @@
+//go:build unit
+// +build unit
+
 package f3client
 
 import (
@@ -7,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateRequest_ValidationIdMissing(t *testing.T) {
+func Test_Unit_ValidateRequest_ValidationIdMissing(t *testing.T) {
 
 	// prepare
 	requestMap := make(map[string]interface{})
@@ -27,7 +30,7 @@ func TestValidateRequest_ValidationIdMissing(t *testing.T) {
 	}
 }
 
-func TestValidateRequest_ValidationOrgIdMissing(t *testing.T) {
+func Test_Unit_ValidateRequest_ValidationOrgIdMissing(t *testing.T) {
 
 	// prepare
 	requestMap := make(map[string]interface{})
@@ -47,7 +50,7 @@ func TestValidateRequest_ValidationOrgIdMissing(t *testing.T) {
 	}
 }
 
-func TestValidateRequest_ValidationForIdZero(t *testing.T) {
+func Test_Unit_ValidateRequest_ValidationForIdZero(t *testing.T) {
 
 	// prepare
 	requestMap := make(map[string]interface{})
@@ -69,7 +72,7 @@ func TestValidateRequest_ValidationForIdZero(t *testing.T) {
 
 }
 
-func TestValidateRequest_ValidationForOrgIdZero(t *testing.T) {
+func Test_Unit_ValidateRequest_ValidationForOrgIdZero(t *testing.T) {
 
 	// prepare
 	requestMap := make(map[string]interface{})

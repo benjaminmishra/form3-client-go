@@ -7,25 +7,22 @@ $(STATICCHECK):
 $(GODOC):
 	go get -v  golang.org/x/tools/cmd/godoc
 
-hello:
-	echo "Hello World"
 
-test: lint
-	go test -cover -v
+test: lint test.unit test.integration
 
 test.unit: lint
-	go test ./f3client/... -cover -v
+	go test ./f3client/... -run=^Test_Unit -cover -v
 
-test.integration: lint
-	go test ./f3client/... -tag=integration -v
+test.integration: lint 
+	go test ./f3client/... -p 1 -run=^Test_Integration -v -cover
 	
 
 lint: fmt | $(STATICCHECK)
-	go vet ./...
-	$(STATICCHECK) ./...
+	go vet ./f3client/...
+	$(STATICCHECK) ./f3client/...
 
-fmt : 
-	go fmt ./...
+fmt :
+	go fmt ./f3client/...
 
 doc :
 	$(GODOC)

@@ -12,7 +12,7 @@ import (
 
 // ------- f3client NewClient function unit tests --------- //
 
-func TestNewClient_NoOptions(t *testing.T) {
+func Test_Unit_NewClient_NoOptions(t *testing.T) {
 
 	actual, err := f3client.NewClient()
 	if err != nil {
@@ -21,7 +21,7 @@ func TestNewClient_NoOptions(t *testing.T) {
 	assert.IsType(t, &f3client.Client{}, actual)
 }
 
-func TestNewClient_CustomHostUrl(t *testing.T) {
+func Test_Unit_NewClient_CustomHostUrl(t *testing.T) {
 	actual, err := f3client.NewClient(f3client.WithHostUrl("http://foo.bar.com"))
 	if err != nil {
 		panic(err)
@@ -34,7 +34,7 @@ func TestNewClient_CustomHostUrl(t *testing.T) {
 	assert.Equal(t, *expected, actual.BaseURL)
 }
 
-func TestNewClient_CustomHttpClient(t *testing.T) {
+func Test_Unit_NewClient_CustomHttpClient(t *testing.T) {
 	actual, err := f3client.NewClient(f3client.WithHttpClient(&http.Client{}))
 	if err != nil {
 		panic(err)
@@ -49,7 +49,7 @@ func TestNewClient_CustomHttpClient(t *testing.T) {
 
 // ------------- f3client NewRequest function unit tests -------------//
 
-func TestNewRequest_WithoutUrlStr(t *testing.T) {
+func Test_Unit_NewRequest_WithoutUrlStr(t *testing.T) {
 	c, err := f3client.NewClient()
 	if err != nil {
 		panic(err)
@@ -64,7 +64,7 @@ func TestNewRequest_WithoutUrlStr(t *testing.T) {
 
 }
 
-func TestNewRequest_WithoutObjectType(t *testing.T) {
+func Test_Unit_NewRequest_WithoutObjectType(t *testing.T) {
 	c, err := f3client.NewClient()
 	if err != nil {
 		panic(err)
@@ -79,7 +79,7 @@ func TestNewRequest_WithoutObjectType(t *testing.T) {
 
 }
 
-func TestNewRequest_Post_NilRequestBody(t *testing.T) {
+func Test_Unit_NewRequest_Post_NilRequestBody(t *testing.T) {
 	c, err := f3client.NewClient()
 	if err != nil {
 		panic(err)
@@ -94,7 +94,7 @@ func TestNewRequest_Post_NilRequestBody(t *testing.T) {
 
 }
 
-func TestNewRequest_Put_EmptyRequestBody(t *testing.T) {
+func Test_Unit_NewRequest_Put_EmptyRequestBody(t *testing.T) {
 	c, err := f3client.NewClient()
 	if err != nil {
 		panic(err)
@@ -111,7 +111,7 @@ func TestNewRequest_Put_EmptyRequestBody(t *testing.T) {
 
 // -------- f3client SendRequest function unit tests ---------------- //
 
-func TestSendRequest_EmptyRequest(t *testing.T) {
+func Test_Unit_SendRequest_EmptyRequest(t *testing.T) {
 
 	c, err := f3client.NewClient()
 	if err != nil {

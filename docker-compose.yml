@@ -1,5 +1,10 @@
 version: '3'
 
+networks:
+  form3-accountapi-client-test:
+    driver: bridge
+
+
 services:
   accountapi:
     image: form3tech/interview-accountapi:v1.0.0-39-gef7db03d
@@ -21,6 +26,9 @@ services:
       - DATABASE-PASSWORD=123
     ports:
       - 8080:8080
+    networks:
+      - form3-accountapi-client-test
+
   postgresql:
     image: postgres:9.5-alpine
     healthcheck:
@@ -36,26 +44,34 @@ services:
       - ./scripts/db:/docker-entrypoint-initdb.d/
     ports:
       - 5432:5432
+    networks:
+      - form3-accountapi-client-test
 
   vault:
     image: vault:1.6.3
     environment:
       - SKIP_SETCAP=1
       - VAULT_DEV_ROOT_TOKEN_ID=8fb95528-57c6-422e-9722-d2147bcba8ed
+    networks:
+      - form3-accountapi-client-test
   
+
   accountapi_client:
     build:
       context: .
       dockerfile: ./Dockerfile
     depends_on:
       - accountapi
-      - postgres
+      - postgresql
       - vault
     environment:
       - PSQL_USER=root
       - PSQL_PASSWORD=password
       - PSQL_HOST=postgresql
       - PSQL_PORT=5432
+      - API_HOST=http://accountapi:8080
+    networks:
+      - form3-accountapi-client-test
       
 
 

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewArgError(t *testing.T) {
+func Test_Unit_NewArgError(t *testing.T) {
 
 	err := f3client.NewArgError("foo", "foo is missing")
 	var target *f3client.ArgumentError

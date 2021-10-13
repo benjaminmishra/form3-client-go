@@ -19,9 +19,10 @@ import (
 var (
 	host     string = os.Getenv("PSQL_HOST")
 	port     string = os.Getenv("PSQL_PORT")
-	user     string = os.Getenv("PSQL_PORT")
+	user     string = os.Getenv("PSQL_USER")
 	password string = os.Getenv("PSQL_PASSWORD")
 	dbname   string = "interview_accountapi"
+	apihost  string = os.Getenv("API_HOST")
 )
 
 func TestMain(m *testing.M) {
@@ -36,11 +37,16 @@ func testMain(m *testing.M) int {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	/// make sure to start with a clean table
+	_, err = db.Exec("delete from public.\"Account\"")
+	if err != nil {
+		panic(err)
+	}
 
+	// insert your record
 	insertStatement := `insert into public."Account" 
-	(id,organisation_id,version, is_deleted, is_locked,created_on, modified_on,record, pagination_id)
-	values ($1,$2,$3, $4,$5, $6, $7, $8,$9)`
+	(id,organisation_id,version, is_deleted, is_locked,created_on, modified_on,record)
+	values ($1,$2,$3, $4,$5, $6, $7, $8)`
 
 	_, err = db.Exec(insertStatement,
 		"bc8fb900-d6fd-41d0-b187-dc23ba928712",
@@ -50,8 +56,7 @@ func testMain(m *testing.M) int {
 		false,
 		time.Now(),
 		time.Now(),
-		"{\"bic\": \"NWBKGB22\", \"name\": [\"hello world\"], \"bank_id\": \"400300\", \"country\": \"GB\", \"bank_id_code\": \"GBDSC\", \"base_currency\": \"GBP\", \"alternative_bank_account_names\": [\"abc\"]}",
-		1)
+		"{\"bic\": \"NWBKGB22\", \"name\": [\"hello world\"], \"bank_id\": \"400300\", \"country\": \"GB\", \"bank_id_code\": \"GBDSC\", \"base_currency\": \"GBP\", \"alternative_bank_account_names\": [\"abc\"]}")
 	if err != nil {
 		panic(err)
 	}
@@ -64,23 +69,23 @@ func testMain(m *testing.M) int {
 	if err != nil {
 		panic(err)
 	}
-
+	db.Close()
 	return exitVal
 
 }
 
 // --------------------- Create account method --------------------------- //
 
-func TestAccountService_Create(t *testing.T) {
+func Test_Integration_AccountService_Create(t *testing.T) {
 
 	ctx := context.Background()
 	// instantiate the client
-	client, err := f3client.NewClient(f3client.WithHostUrl("http://localhost:8080"))
+	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
 		panic(err)
 	}
 
-	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
+	accountId, err := uuid.NewRandom()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -88,7 +93,6 @@ func TestAccountService_Create(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// create new account object
 	newAccount := f3client.Account{
 		ID:             accountId,
@@ -100,7 +104,7 @@ func TestAccountService_Create(t *testing.T) {
 			BankIDCode:        "GBDSC",
 			Bic:               "NWBKGB22",
 			ProcessingService: "ABC Bank",
-			Name:              []string{"hello world"},
+			Name:              []string{"hello world1"},
 			AlternativeNames:  []string{"abc"},
 		},
 	}
@@ -138,11 +142,11 @@ func TestAccountService_Create(t *testing.T) {
 
 }
 
-func TestAccountService_Create_EmptyBody(t *testing.T) {
+func Test_Integration_AccountService_Create_EmptyBody(t *testing.T) {
 
 	ctx := context.Background()
 	// instantiate the client
-	client, err := f3client.NewClient(f3client.WithHostUrl("http://localhost:8080"))
+	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
 		panic(err)
 	}
@@ -168,9 +172,9 @@ func TestAccountService_Create_EmptyBody(t *testing.T) {
 	}
 }
 
-// ------------------- Delete account tests -------------------- //
+// ------------------- Fetch Account tests ---------------------- //
 
-func TestAccountService_Delete(t *testing.T) {
+func Test_Integration_AccountService_Fetch(t *testing.T) {
 
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -178,7 +182,50 @@ func TestAccountService_Delete(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	client, err := f3client.NewClient()
+	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
+	if err != nil {
+		panic(err)
+	}
+	account, err := client.Accounts.Fetch(ctx, accountId)
+	if err != nil {
+		assert.Fail(t, err.Error())
+	}
+
+	assert.NoError(t, err, fmt.Sprint("Found Account with Id : "+account.ID.String()))
+}
+
+func Test_Integration_AccountService_Fetch_NotFound(t *testing.T) {
+
+	ctx := context.Background()
+	accountId, err := uuid.NewRandom()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
+	if err != nil {
+		panic(err)
+	}
+	_, err = client.Accounts.Fetch(ctx, accountId)
+
+	if !assert.Error(t, err) {
+		assert.Fail(t, "Expected error but there was no error")
+	} else {
+		assert.Positive(t, "Error generated as expected")
+	}
+}
+
+// ------------------- Delete account tests -------------------- //
+
+func Test_Integration_AccountService_Delete(t *testing.T) {
+
+	ctx := context.Background()
+	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
 		panic(err)
 	}
@@ -191,9 +238,7 @@ func TestAccountService_Delete(t *testing.T) {
 	assert.Equal(t, true, success)
 }
 
-// ------------------- Fetch Account tests ---------------------- //
-
-func TestAccountService_Fetch(t *testing.T) {
+func Test_Integration_AccountService_Delete_WrongVersion(t *testing.T) {
 
 	ctx := context.Background()
 	accountId, err := uuid.Parse("bc8fb900-d6fd-41d0-b187-dc23ba928712")
@@ -201,14 +246,16 @@ func TestAccountService_Fetch(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	client, err := f3client.NewClient()
-	if err != nil {
-		panic(err)
-	}
-	account, err := client.Accounts.Fetch(ctx, accountId)
+	client, err := f3client.NewClient(f3client.WithHostUrl(apihost))
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Print(account)
+	_, err = client.Accounts.Delete(ctx, accountId, 1)
+	if err != nil {
+		assert.Error(t, err, err.Error())
+	} else {
+		assert.Fail(t, "Expected error but no error was found")
+	}
+
 }

@@ -1,3 +1,6 @@
+//go:build unit
+// +build unit
+
 package f3client_test
 
 import (
@@ -10,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConvertTo(t *testing.T) {
+func Test_Unit_ConvertTo(t *testing.T) {
 
 	accId := uuid.New()
 	orgId := uuid.New()
@@ -59,7 +62,7 @@ func TestConvertTo(t *testing.T) {
 
 }
 
-func TestConvertTo_NilTargetType(t *testing.T) {
+func Test_Unit_ConvertTo_NilTargetType(t *testing.T) {
 
 	accId := uuid.New()
 	orgId := uuid.New()
@@ -91,7 +94,7 @@ func TestConvertTo_NilTargetType(t *testing.T) {
 
 }
 
-func TestConvertTo_IncompatableTargetType(t *testing.T) {
+func Test_Unit_ConvertTo_IncompatableTargetType(t *testing.T) {
 
 	accId := uuid.New()
 	orgId := uuid.New()

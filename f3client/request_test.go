@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMarshalToRequestBody(t *testing.T) {
+func Test_Unit_MarshalToRequestBody(t *testing.T) {
 	accUUId := uuid.New()
 	orgUUId := uuid.New()
 
@@ -58,7 +58,7 @@ func TestMarshalToRequestBody(t *testing.T) {
 	assert.Equal(t, *actual, expected)
 }
 
-func TestMarshalToRequestBody_NilRequest(t *testing.T) {
+func Test_Unit_MarshalToRequestBody_NilRequest(t *testing.T) {
 
 	_, err := f3client.MarshalToRequestBody(nil, "accounts")
 	if err != nil {
@@ -69,7 +69,7 @@ func TestMarshalToRequestBody_NilRequest(t *testing.T) {
 	}
 }
 
-func TestMarshalToRequestBody_NilRequestType(t *testing.T) {
+func Test_Unit_MarshalToRequestBody_NilRequestType(t *testing.T) {
 	accUUId := uuid.New()
 	orgUUId := uuid.New()
 
@@ -95,7 +95,7 @@ func TestMarshalToRequestBody_NilRequestType(t *testing.T) {
 	}
 }
 
-func TestMarshalToRequestBody_OrganisationIDMissing(t *testing.T) {
+func Test_Unit_MarshalToRequestBody_OrganisationIDMissing(t *testing.T) {
 	accUUId := uuid.New()
 	accCreateReq := f3client.Account{
 		ID: accUUId,
@@ -114,7 +114,7 @@ func TestMarshalToRequestBody_OrganisationIDMissing(t *testing.T) {
 	assert.EqualError(t, err, "organisation_id is mandatory in the request body")
 }
 
-func TestMarshalToRequestBody_IDMissing(t *testing.T) {
+func Test_Unit_MarshalToRequestBody_IDMissing(t *testing.T) {
 	orgUUId := uuid.New()
 	accCreateReq := f3client.Account{
 		OrganisationID: orgUUId,
