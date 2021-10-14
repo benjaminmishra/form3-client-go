@@ -34,7 +34,7 @@ import github.com/benjaminmishra/form3-client-go/v1/f3client // with go modules 
 import github.com/benjaminmishra/form3-client-go/f3client // with go modules disabled
 ```
 
-Construct a new f3clinet and then use the various services on the client to access diffrent parts of the api. For example :
+Construct a new f3clinet and then use the various services on the client to access different parts of the api. For example :
 ``` go
 // create new f3client, with default options
 c, err := f3client.NewClient()
@@ -47,7 +47,7 @@ c, err := f3client.NewClient()
 account, err := client.Accounts.Fetch(context.Background(), accountId)
 ```
 
-The create api needs an pointer to an instance of f3clinet.account struct to be passed in order for get the full details of the acocunt. Note that in all cases the account id and/or organisation id is mandatory.
+The create api needs an pointer to an instance of f3client.account struct to be passed to get the full details of the acocunt. Note that in almost all methods the account id and/or organisation id is mandatory to be passed in the request body. When this does not happen then the client throws an error.
 For example :
 
 ```go
@@ -86,9 +86,9 @@ Note that you need to have GNU make installed on your system. Also docker and do
    make test.integration # for running only integration, also sets the necessary env variables 
    ```
 
->Note : When running tests the code is first linted and staticchcker is run on it first. In case you have >made modifications to the code that violate the go rules of formatting then the tests will fail to run.
+>Note : When running tests the code is first linted and staticchcker is run on it first. In case you have made modifications to the code that violate the go rules of formatting then the tests will fail to run.
 
->Also this codebase uses the docker-compose.yml file provided and builds up on it. It has two >docker-compose files i.e. docker-compose.yml and docker-compose.test.yml. To test using docker compose up >it uses the docker-compose.yml file. But to test direcly on system it uses docker-compose.test.yml.
+>Also this codebase uses the docker-compose.yml file provided and builds up on it. It has two docker-compose files i.e. docker-compose.yml and docker-compose.test.yml. To test using docker compose up >it uses the docker-compose.yml file. But to test direcly on system it uses docker-compose.test.yml.
 
 ### Running tests using docker compose up
 *__Prerequisites__ : GNU Make, go version 1.17 and higher, docker , docker compose, docker engine running*
