@@ -13,8 +13,6 @@ Also it follows advice from the following blog posts about semantics
 - [Josh Michielsen's article about api clients for humans](https://blog.gopheracademy.com/advent-2019/api-clients-humans/)
 - [George Shaw's two part article on integration testing with docker](https://www.ardanlabs.com/blog/2019/03/integration-testing-in-go-executing-tests-with-docker.html)
 
->Note for reviewer: I am fairly new to using go and writing modules in go. Hence I have heavily relied on blogs and articles other than the ones mentioned above.
-
 ## Installation
 
 f3client is compatable with module mode in modern Go release. In order to get this module add the follwoing to your code and run go get.
@@ -104,7 +102,7 @@ Note that you need to have GNU make installed on your system. Also docker and do
    - run ```make docker.cleanup``` in the root directory of the codebase.
 
 ## Versioning
-This library follows semvers. At this moment this is labelled as v1.0.0-beta.2 release, although that doesn't make sense in the context of this module. It is there purely to demonstrate how the versioning would be done in a production module.
+This library follows semvers. At this moment this is labelled as v1.0.0-beta.2 release.
 
 
 ## Features yet to be implemented and known issues
