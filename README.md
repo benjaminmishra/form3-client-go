@@ -32,7 +32,7 @@ import github.com/benjaminmishra/form3-client-go/v1/f3client // with go modules 
 import github.com/benjaminmishra/form3-client-go/f3client // with go modules disabled
 ```
 
-Construct a new f3clinet and then use the various services on the client to access different parts of the api. For example :
+Construct a new f3client and then use the various services on the client to access different parts of the api. For example :
 ``` go
 // create new f3client, with default options
 c, err := f3client.NewClient()
